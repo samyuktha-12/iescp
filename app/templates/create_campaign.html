@@ -1,0 +1,45 @@
+{% extends "index.html" %}
+
+{% block title %}Create Campaign{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <h2>Create Campaign</h2>
+      <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+          {{ form.name.label }}
+          {{ form.name(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.description.label }}
+          {{ form.description(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.start_date.label }}
+          {{ form.start_date(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.end_date.label }}
+          {{ form.end_date(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.budget.label }}
+          {{ form.budget(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.visibility.label }}
+          {{ form.visibility(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.goals.label }}
+          {{ form.goals(class="form-control") }}
+        </div>
+        <div class="form-group">
+          {{ form.submit(class="btn btn-primary") }}
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
