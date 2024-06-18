@@ -1,0 +1,18 @@
+.col-md-6 {
+    background-color: #DBE2EF;
+    background-image: linear-gradient(to right, #DBE2EF 65%, #F9F7F7);
+
+    h2 {
+        margin-top: 30px;
+        margin-left: 30px;
+    }
+}
+.form-group{
+    margin-left: 30px;
+    font-weight: bold;
+}
+
+.col-md-6.d-flex.align-items-center {
+    background-image: linear-gradient(to right, #F9F7F7 65%, #F9F7F7);
+}
+
