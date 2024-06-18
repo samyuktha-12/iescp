@@ -1,0 +1,115 @@
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure full viewport height */
+    margin: 0;
+    background-color: #F9F7F7; /* White Smoke background */
+    color: #112D4E; /* Prussian Blue text */
+    font-family: Lora, serif;
+}
+
+.navbar, .footer {
+    background-color: #112D4E; /* Prussian Blue navbar and footer */
+    color: #F9F7F7; /* White Smoke text in navbar and footer */
+}
+
+.navbar a, .footer a {
+    color: #F9F7F7; /* White Smoke text in navbar and footer */
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #112D4E; /* Prussian Blue headlines */
+}
+
+.btn-primary {
+    background-color: #3F72AF; /* Steel Blue buttons */
+    border-color: #3F72AF;
+}
+
+.btn-primary:hover {
+    background-color: #365F91; /* Darker Steel Blue on hover */
+    border-color: #365F91;
+}
+
+.btn-secondary {
+    background-color: #DBE2EF; /* Light Blue secondary buttons */
+    border-color: #DBE2EF;
+}
+
+.btn-secondary:hover {
+    background-color: #B8C7DE; /* Darker Light Blue on hover */
+    border-color: #B8C7DE;
+}
+
+.alert-warning {
+    background-color: #FFD700; /* Optional: Yellow warnings */
+    border-color: #FFD700;
+    color: #112D4E; /* Prussian Blue */
+}
+
+.alert-success {
+    background-color: #3F72AF; /* Steel Blue success messages */
+    border-color: #3F72AF;
+    color: #F9F7F7; /* White Smoke */
+}
+
+.jumbotron {
+    background-color: #DBE2EF; /* Light Blue secondary background */
+    padding: 2rem 1rem;
+}
+
+a {
+    color: #3F72AF; /* Steel Blue links */
+}
+
+a:hover {
+    color: #365F91; /* Darker Steel Blue on hover */
+}
+
+.navbar {
+    background-color: rgba(17, 45, 78, 0.95); /* Prussian Blue with 95% opacity */
+    box-shadow: 
+    0 3px 4px rgba(17, 45, 78, 0.2), /* Shadow matching Prussian Blue */
+    0 5px 8px rgba(17, 45, 78, 0.1);
+    background-image: linear-gradient(to right, #112D4E 65%, #3F72AF);
+}
+
+.navbar-nav .nav-link {
+    color: #F9F7F7; /* White Smoke text for navbar links */
+}
+
+.navbar-nav .nav-link:hover {
+    color: #B8C7DE; /* Lighter Steel Blue on hover */
+}
+
+.jumbotron {
+    background-color: #DBE2EF; /* Light Blue secondary background */
+    margin-top: 20px; /* Add margin from the top */
+    padding: 2rem 1rem; /* Padding for content inside the jumbotron */
+    border-radius: 5px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Small shadow */
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: #F9F7F7 !important;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover{
+    font-weight: bold;
+}
+
+.footer {
+    background-color: rgba(17, 45, 78, 0.95); /* Prussian Blue with 95% opacity */
+    box-shadow:  
+    0 -3px 4px rgba(17, 45, 78, 0.1),
+    0 -5px 8px rgba(17, 45, 78, 0.2);
+    background-image: linear-gradient(to left, #112D4E 65%, #3F72AF);
+    color: #F9F7F7; /* White Smoke text in footer */
+    padding: 10px 0; /* Padding for content inside the footer */
+    text-align: center; /* Center-align text inside the footer */
+    width: 100%; /* Full width */
+    margin-top: auto; /* Push footer to the bottom */
+    .text-muted {
+        color: #B8C7DE !important;
+    }
+}
