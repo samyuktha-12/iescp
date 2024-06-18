@@ -16,3 +16,20 @@
     background-image: linear-gradient(to right, #F9F7F7 65%, #F9F7F7);
 }
 
+.flash-messages {
+    list-style-type: none;
+    padding: 10px;
+    margin: 10px;
+}
+
+.flash-message {
+    margin-left: 10px;
+    padding: 5px;
+    margin-bottom: 10px;
+    background-color: #FA7070;
+    border-radius: 5px;
+    text-align: center;
+    color: #F9F7F7;
+    font-size:1.1rem;
+}
+

@@ -1,8 +1,10 @@
 # app/routes.py
-from flask import render_template, flash, redirect, url_for
-from app import app, db
+from flask import render_template, flash, redirect, url_for, request, jsonify
+from app import app, db, api
 from app.forms import LoginForm, RegistrationForm, CampaignForm
 from app.models import User, Campaign, AdRequest
+from app.resources import IndexResource, LoginResource, RegisterResource, CreateCampaignResource
+import requests
 
 @app.route('/')
 @app.route('/index')
@@ -13,10 +15,25 @@ def index():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        # Implement login logic here
-        flash('Login requested for user {}, remember_me={}'.format(
-            form.username.data, form.remember_me.data))
-        return redirect(url_for('index'))
+        data = {
+            'username': form.username.data,
+            'password': form.password.data,
+            'remember_me': form.remember_me.data
+        }
+        api_url = url_for('loginresource', _external=True)
+        response = requests.post(api_url, data=data)
+        if response.status_code == 200:
+            json_response = response.json()
+            print(json_response)
+            if 'redirect_url' in json_response:
+                redirect_url = json_response['redirect_url']
+                return redirect(redirect_url)
+            else:
+                flash(json_response.get('message', 'Login failed'))
+                return redirect(url_for('login'))
+        else:
+            flash(response.json().get('message', 'Login failed'))
+            return redirect(url_for('login'))
     return render_template('login.html', title='Sign In', form=form)
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -65,3 +82,9 @@ def create_campaign():
         flash('Campaign created successfully!')
         return redirect(url_for('sponsor_dashboard'))
     return render_template('create_campaign.html', title='Create Campaign', form=form)
+
+# Add API resource routes
+api.add_resource(IndexResource, '/api/')
+api.add_resource(LoginResource, '/api/login')
+api.add_resource(RegisterResource, '/api/register')
+api.add_resource(CreateCampaignResource, '/api/campaign/create')
