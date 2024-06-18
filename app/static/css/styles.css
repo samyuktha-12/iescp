@@ -24,6 +24,8 @@ h1, h2, h3, h4, h5, h6 {
 .btn-primary {
     background-color: #3F72AF; /* Steel Blue buttons */
     border-color: #3F72AF;
+    border-radius: 30px;
+    box-shadow: 2px 0px 2px  #112D4E;
 }
 
 .btn-primary:hover {
@@ -113,3 +115,20 @@ a:hover {
         color: #B8C7DE !important;
     }
 }
+
+.highlight {
+    color: #112D4E; /* Prussian Blue text */
+    font-weight: bold;
+    background-color: #B8C7DE;
+    padding: 0.1px;
+}
+
+.lead{
+    text-align: justify;
+}
+
+.row{
+    margin-top: 20px;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+}
+
