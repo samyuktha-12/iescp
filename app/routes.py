@@ -24,7 +24,6 @@ def login():
         response = requests.post(api_url, data=data)
         if response.status_code == 200:
             json_response = response.json()
-            print(json_response)
             if 'redirect_url' in json_response:
                 redirect_url = json_response['redirect_url']
                 return redirect(redirect_url)

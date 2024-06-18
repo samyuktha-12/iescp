@@ -34,6 +34,7 @@
         <div class="form-group">
           {{ form.password.label }}
           {{ form.password(class="form-control") }}
+          <p style="text-align: right; color: #3F72AF;">Forgot Password?</p>
         </div>
         <div class="form-group form-check">
           {{ form.remember_me(class="form-check-input") }}
@@ -42,6 +43,11 @@
         <div class="form-group">
           {{ form.submit(class="btn btn-primary") }}
         </div>
+        <hr class="my-4">
+        <div class="form-group">
+          <p>New User? <a href="register">Click Here to Create Account</a></p>
+        </div>
+        <br>
       </form>
     </div>
     <div class="col-md-6 d-flex align-items-center">

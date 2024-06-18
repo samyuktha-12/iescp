@@ -3,13 +3,16 @@
     background-image: linear-gradient(to right, #DBE2EF 65%, #F9F7F7);
 
     h2 {
-        margin-top: 100px;
+        margin-top: 70px;
         margin-left: 30px;
     }
 }
 .form-group{
     margin-left: 30px;
     font-weight: bold;
+    p{
+        font-size: small;
+    }
 }
 
 .col-md-6.d-flex.align-items-center {

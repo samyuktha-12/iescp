@@ -1,3 +1,6 @@
+main.container{
+    margin-top: 10px !important;
+}
 .col-md-6 {
     background-color: #DBE2EF;
     background-image: linear-gradient(to right, #DBE2EF 65%, #F9F7F7);
@@ -10,6 +13,9 @@
 .form-group{
     margin-left: 30px;
     font-weight: bold;
+    p{
+        font-size: small;
+    }
 }
 
 .col-md-6.d-flex.align-items-center {
