@@ -26,10 +26,19 @@
     margin-left: 10px;
     padding: 5px;
     margin-bottom: 10px;
-    background-color: #FA7070;
     border-radius: 5px;
     text-align: center;
     color: #F9F7F7;
     font-size:1.1rem;
+}
+
+.warning-message {
+    background-color: #FA7070; 
+}
+
+.success-message {
+    background-color: #d4edda;
+    font-size: 1rem;
+    color: black;
 }
 

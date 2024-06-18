@@ -39,13 +39,31 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
+    data = {
+            'username': form.username.data,
+            'email':form.email.data,
+            'password': form.password.data,
+            'role': form.role.data
+        }
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data, role=form.role.data)
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
-        flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('login'))
+        api_url = url_for('registerresource', _external=True)
+        response = requests.post(api_url,data)
+        if response.status_code == 200:
+            json_response = response.json()
+            if json_response['status_code']==200:
+                flash('Congratulations, you are now a registered user!<br>Please login to start enjoying our services!')
+                redirect_url = json_response['redirect_url']
+                return redirect(redirect_url)
+            else:
+                flash(json_response['message'])
+                return redirect('register')
+        else:
+            flash('Sign Up failed. Try Again')
+            return redirect(url_for('register'))
+    else:
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f"Error in the {getattr(form, field).label.text} field - {error}")
     return render_template('register.html', title='Register', form=form)
 
 @app.route('/admin/dashboard')

@@ -13,14 +13,18 @@
       <h2>Log In</h2>
       <hr class="my-4">
       {% with messages = get_flashed_messages() %}
-        {% if messages %}
-          <ul class="flash-messages">
-            {% for message in messages %}
-              <li class="flash-message"> ⚠️ {{ message }} </li>
-            {% endfor %}
-          </ul>
-        {% endif %}
-      {% endwith %}
+      {% if messages %}
+        <ul class="flash-messages">
+          {% for message in messages %}
+            {% if message.startswith('Congratulations') %}
+              <li class="flash-message success-message"> 🎉 {{ message| safe }} </li>
+            {% else %}
+              <li class="flash-message warning-message"> ⚠️ {{ message }} </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
       <form method="POST" action="">
         {{ form.hidden_tag() }}
         <div class="form-group">

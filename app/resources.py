@@ -34,13 +34,18 @@ class LoginResource(Resource):
 class RegisterResource(Resource):
     def post(self):
         form = RegistrationForm(request.form)
-        if form.validate():
-            user = User(username=form.username.data, email=form.email.data, role=form.role.data)
-            user.set_password(form.password.data)
-            db.session.add(user)
-            db.session.commit()
-            return {"message": "Congratulations, you are now a registered user!"}, 201
-        return {"errors": form.errors}, 400
+        if (User.query.filter_by(email=form.email.data).first() and User.query.filter_by(email=form.email.data).first().email == form.email.data):
+            return jsonify({"message":'Email address already registered.<br>Please log in.', "status_code":400})
+        
+        if (User.query.filter_by(username=form.username.data).first() and User.query.filter_by(username=form.username.data).first().username == form.username.data):
+            return jsonify({"message":'Username already exists.<br>Please choose a different username.', "status_code":400})
+            
+        user = User(username=form.username.data, email=form.email.data, role=form.role.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        return jsonify({"redirect_url": url_for('login'),"status_code":200})
+
 
 class AdminDashboardResource(Resource):
     def get(self):
