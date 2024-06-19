@@ -1,10 +1,11 @@
 # app/routes.py
-from flask import render_template, flash, redirect, url_for, request, jsonify
+from flask import render_template, flash, redirect, url_for, session
 from app import app, db, api
 from app.forms import LoginForm, RegistrationForm, CampaignForm
 from app.models import User, Campaign, AdRequest
-from app.resources import IndexResource, LoginResource, RegisterResource, CreateCampaignResource
+from app.resources import IndexResource, LoginResource, RegisterResource, CreateCampaignResource, AcceptAdRequestResource,RejectAdRequestResource, GetUserProfileResource
 import requests
+from datetime import datetime
 
 @app.route('/')
 @app.route('/index')
@@ -26,6 +27,7 @@ def login():
             json_response = response.json()
             if 'redirect_url' in json_response:
                 redirect_url = json_response['redirect_url']
+                session['user_id']=json_response['user_id']
                 return redirect(redirect_url)
             else:
                 flash(json_response.get('message', 'Login failed'))
@@ -34,6 +36,11 @@ def login():
             flash(response.json().get('message', 'Login failed'))
             return redirect(url_for('login'))
     return render_template('login.html', title='Sign In', form=form)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -77,8 +84,50 @@ def sponsor_dashboard():
 
 @app.route('/influencer/dashboard')
 def influencer_dashboard():
-    # Implement influencer dashboard view logic here
-    return render_template('influencer_dashboard.html', title='Influencer Dashboard')
+    user_id = session.get('user_id')  # Assuming user_id is stored in session after login
+    user = User.query.get(user_id)
+    
+    if not user or user.role != 'influencer':
+        return redirect(url_for('login'))
+
+    # Fetch ad requests for the logged-in influencer and include sponsor name
+    ad_requests = db.session.query(
+        AdRequest, Campaign, User.username.label('sponsor_name')
+    ).join(Campaign, AdRequest.campaign_id == Campaign.id
+    ).join(User, Campaign.sponsor_id == User.id
+    ).filter(
+        AdRequest.influencer_id == user_id
+    ).all()
+
+    active_campaigns = []
+    campaign_requests = []
+    completed = []
+    current_date = datetime.utcnow()
+    
+    for ad_request, campaign, sponsor_name in ad_requests:
+        #if campaign.start_date <= current_date <= campaign.end_date and ad_request.status in ['Accepted']:
+        if ad_request.status in ['Accepted']:
+            active_campaigns.append((ad_request, campaign, sponsor_name))
+        #elif campaign.start_date <= current_date <= campaign.end_date and ad_request.status in ['Pending']:
+        if ad_request.status in ['Pending']:
+            campaign_requests.append((ad_request, campaign, sponsor_name))
+        else:
+            completed.append((ad_request, campaign, sponsor_name))
+            
+    # Calculate total earnings from completed campaigns
+    total_earnings = db.session.query(db.func.sum(AdRequest.payment_amount)).filter_by(
+        influencer_id=user_id,
+        status='Completed'
+    ).scalar() or 0.0
+
+    return render_template('influencer_dashboard.html',
+                           username=user.username,
+                           active_campaigns=active_campaigns,
+                           campaign_requests=campaign_requests,
+                           total_earnings=total_earnings, 
+                           title='Influencer Dashboard', 
+                           active_page='profile')
+
 
 @app.route('/campaign/create', methods=['GET', 'POST'])
 def create_campaign():
@@ -100,8 +149,12 @@ def create_campaign():
         return redirect(url_for('sponsor_dashboard'))
     return render_template('create_campaign.html', title='Create Campaign', form=form)
 
+
 # Add API resource routes
 api.add_resource(IndexResource, '/api/')
 api.add_resource(LoginResource, '/api/login')
 api.add_resource(RegisterResource, '/api/register')
 api.add_resource(CreateCampaignResource, '/api/campaign/create')
+api.add_resource(AcceptAdRequestResource, '/api/campaign/accept')
+api.add_resource(RejectAdRequestResource, '/api/campaign/reject')
+api.add_resource(GetUserProfileResource, '/api/getuser')

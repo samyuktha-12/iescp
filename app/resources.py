@@ -1,7 +1,7 @@
 from flask import jsonify, request, url_for, session
 from flask_restful import Resource
 from app import db
-from app.models import User, Campaign
+from app.models import User, Campaign,AdRequest
 from app.forms import LoginForm, RegistrationForm, CampaignForm
 
 class IndexResource(Resource):
@@ -21,11 +21,11 @@ class LoginResource(Resource):
             session['role'] = user.role
 
             if user.role == 'admin':
-                return jsonify({"redirect_url": url_for('admin_dashboard'),"status_code":200})
+                return jsonify({"redirect_url": url_for('admin_dashboard'),"status_code":200,"user_id":user.id})
             elif user.role == 'sponsor':
-                return jsonify({"redirect_url": url_for('sponsor_dashboard'),"status_code":200})
+                return jsonify({"redirect_url": url_for('sponsor_dashboard'),"status_code":200,"user_id":user.id})
             elif user.role == 'influencer':
-                return jsonify({"redirect_url": url_for('influencer_dashboard'),"status_code":200})
+                return jsonify({"redirect_url": url_for('influencer_dashboard'),"status_code":200,"user_id":user.id})
             else:
                 return jsonify({"message": "Invalid username or password","status_code":401})
         
@@ -46,22 +46,6 @@ class RegisterResource(Resource):
         db.session.commit()
         return jsonify({"redirect_url": url_for('login'),"status_code":200})
 
-
-class AdminDashboardResource(Resource):
-    def get(self):
-        # Implement admin dashboard view logic here
-        return {"message": "Admin Dashboard"}
-
-class SponsorDashboardResource(Resource):
-    def get(self):
-        # Implement sponsor dashboard view logic here
-        return {"message": "Sponsor Dashboard"}
-
-class InfluencerDashboardResource(Resource):
-    def get(self):
-        # Implement influencer dashboard view logic here
-        return {"message": "Influencer Dashboard"}
-
 class CreateCampaignResource(Resource):
     def post(self):
         form = CampaignForm(request.form)
@@ -80,3 +64,35 @@ class CreateCampaignResource(Resource):
             db.session.commit()
             return {"message": "Campaign created successfully!"}, 201
         return {"errors": form.errors}, 400
+    
+class AcceptAdRequestResource(Resource):
+    def post(self):
+        ad_request_id = request.json.get('ad_request_id')  # Assuming ad_request_id is sent from client
+        ad_request = AdRequest.query.get(ad_request_id)
+        if ad_request:
+            ad_request.status = 'Accepted'
+            db.session.commit()
+            return jsonify({'message': 'AD request accepted successfully','status_code':200})
+        else:
+            return jsonify({'error': 'Ad request not found','status_code':404})
+        
+class RejectAdRequestResource(Resource):
+    def post(self):
+        ad_request_id = request.json.get('ad_request_id')  
+        ad_request = AdRequest.query.get(ad_request_id)
+        if ad_request:
+            ad_request.status = 'Rejected'
+            db.session.commit()
+            return jsonify({'message': 'AD Request Rejected','status_code':200})
+        else:
+            return jsonify({'error': 'Ad request not found','status_code':404})
+        
+class GetUserProfileResource(Resource):
+    def post(self):
+        user_id = request.json.get('user_id')
+        user_request = User.query.get(user_id)
+        if user_request:
+            email = user_request.email
+            return jsonify({'email': email,'status_code':200})
+        else:
+            return jsonify({'error': 'User Not Found','status_code':404})

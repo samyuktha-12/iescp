@@ -1,3 +1,6 @@
+main.container{
+    margin-top: 100px !important;
+}
 .col-md-6 {
     background-color: #DBE2EF;
     background-image: linear-gradient(to right, #DBE2EF 65%, #F9F7F7);

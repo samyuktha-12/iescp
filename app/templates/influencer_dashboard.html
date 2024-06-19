@@ -1,8 +1,210 @@
-{% extends "navbar.html" %}
+{% extends "navbar_after_login.html" %}
 
 {% block title %}Influencer Dashboard{% endblock %}
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='/css/influencer_dashboard.css') }}">
+{% endblock %}
 
 {% block content %}
-  <h2>Influencer Dashboard</h2>
-  <!-- Display influencer-specific options and ad request management -->
+<div id="notification" class="notification"></div>
+<div class="dashboard">
+    <div class="profile-section">
+        <div class="avatar-container">
+            <div class="avatar">
+                <img src="{{ url_for('static', filename='/images/influencer.jpg') }}" alt="Profile">
+            </div>
+            <p class="role-tag"><a href="#" id="profile-link" data-toggle="modal" data-target="#profileModal" data-user_id="{{session['user_id']}}"><b>{{username}}</b></a></p>
+        </div>
+        <div class="welcome-text">
+            <h2>Welcome Influencer - <b>{{username}}</b> <span class="party-popper">🎉</span></h2>
+            <div class="earnings-box">
+                <p><span class="highlight">&nbsp;🏆 Total Earnings: <b>Rs. {{ total_earnings }} </span></b></p>
+            </div>
+        </div>
+    </div>
+    <div class="campaign-section">
+        <h3>Active Campaigns</h3>
+        <div class="campaign-list">
+            {% for ad_request, campaign, sponsor_name in active_campaigns %}
+                <div class="campaign-tab">
+                    <div class="campaign-info">
+                        <span><strong style="color:#1D24CA">Campaign : </strong> <b>{{ campaign.name }}</b></span>
+                        <span><strong style="color:#1D24CA">Sponsor : </strong> <b>{{ sponsor_name }}</b></span>
+                    </div>
+                    <div class="campaign-actions">
+                        <button class="btn btn-view" data-toggle="modal" data-target="#campaignModal" 
+                                data-campaign-name="{{ campaign.name }}"
+                                data-sponsor-name="{{sponsor_name}}"
+                                data-campaign-description="{{ campaign.description }}"
+                                data-campaign-requirements="{{ ad_request.requirements }}"
+                                data-campaign-payment="{{ ad_request.payment_amount }}"
+                                data-campaign-status="{{ ad_request.status }}"
+                                data-campaign-messages="{{ ad_request.messages }}">View</button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="request-section">
+        <h3>New Ad Requests</h3>
+        <div class="request-list">
+            {% for ad_request, campaign, sponsor_name in campaign_requests %}
+                <div class="request-tab">
+                    <div class="request-info">
+                        <span><strong style="color:#1D24CA">Campaign : </strong> <b>{{ campaign.name }}</b></span>
+                        <span><strong style="color:#1D24CA">Sponsor : </strong> <b>{{ sponsor_name }}</b></span>
+                    </div>
+                    <div class="request-actions">
+                        <button class="btn btn-view" data-toggle="modal" data-target="#adModal" 
+                                data-campaign-name="{{ campaign.name }}"
+                                data-sponsor-name="{{sponsor_name}}"
+                                data-campaign-description="{{ campaign.description }}"
+                                data-campaign-requirements="{{ ad_request.requirements }}"
+                                data-campaign-payment="{{ ad_request.payment_amount }}">View</button>
+                        <button class="btn btn-accept" data-ad-request-id="{{ ad_request.id }}">Accept</button>
+                        <button class="btn btn-reject" data-ad-request-id="{{ ad_request.id }}">Reject</button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="campaignModal" tabindex="-1" role="dialog" aria-labelledby="campaignModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="campaignModalLabel" style="font-weight: bold;">Campaign Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <th>Campaign</th>
+                                    <td id="modal-campaign-name"></td>
+                                </tr>
+                                <tr>
+                                    <th>Sponsor</th>
+                                    <td id="modal-sponsor-name"></td>
+                                </tr>
+                                <tr>
+                                    <th>Description</th>
+                                    <td id="modal-campaign-description"></td>
+                                </tr>
+                                <tr>
+                                    <th>Requirements</th>
+                                    <td id="modal-campaign-requirements"></td>
+                                </tr>
+                                <tr>
+                                    <th>Payment</th>
+                                    <td id="modal-campaign-payment"></td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
+                                    <td id="modal-campaign-status"></td>
+                                </tr>
+                                <tr>
+                                    <th>Messages</th>
+                                    <td id="modal-campaign-messages"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="modal fade" id="adModal" tabindex="-1" role="dialog" aria-labelledby="adModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="campaignModalLabel" style="font-weight: bold;">Campaign Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <th>Campaign</th>
+                                    <td id="modal-campaign-name"></td>
+                                </tr>
+                                <tr>
+                                    <th>Sponsor</th>
+                                    <td id="modal-sponsor-name"></td>
+                                </tr>
+                                <tr>
+                                    <th>Description</th>
+                                    <td id="modal-campaign-description"></td>
+                                </tr>
+                                <tr>
+                                    <th>Requirements</th>
+                                    <td id="modal-campaign-requirements"></td>
+                                </tr>
+                                <tr>
+                                    <th>Payment</th>
+                                    <td id="modal-campaign-payment"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-accept" data-dismiss="modal">Accept</button>
+                    <button type="button" class="btn btn-view" data-dismiss="modal">Negotiate</button>
+                    <button type="button" class="btn btn-reject" data-dismiss="modal">Reject</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="profileModalLabel" style="font-weight: bold;">User Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <th>Username</th>
+                                    <td>{{ username }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Email</th>
+                                    <td id="modal-email"></td>
+                                </tr>
+                                <tr>
+                                    <th>Role</th>
+                                    <td>Influencer</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+        </div>
+
+</div>
 {% endblock %}
