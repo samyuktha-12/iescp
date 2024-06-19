@@ -168,3 +168,41 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('profile-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            var userId = this.getAttribute('data-user_id');
+            var apiUrl = '/api/getinfluencer';  // Replace with your API endpoint
+            var requestData = {
+                influencer_id: userId  // Assuming 'user_id' maps to 'influencer_id' in your backend
+            };
+            
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                // Populate modal fields
+                document.getElementById('modal-followers').textContent = data.followers;
+                document.getElementById('modal-niches').textContent = data.niches;
+                document.getElementById('modal-platforms').textContent = data.platforms;
+                
+                // Show the modal (assuming you are using Bootstrap modal)
+                $('#profileModal').modal('show');
+            })
+            .catch(function(error) {
+                console.error('Error fetching influencer data:', error);
+            });
+        });
+    });
+    
+

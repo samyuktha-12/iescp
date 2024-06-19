@@ -1,7 +1,7 @@
 from flask import jsonify, request, url_for, session
 from flask_restful import Resource
 from app import db
-from app.models import User, Campaign,AdRequest
+from app.models import User, Campaign, AdRequest, InfluencerProfile
 from app.forms import LoginForm, RegistrationForm, CampaignForm
 
 class IndexResource(Resource):
@@ -96,3 +96,16 @@ class GetUserProfileResource(Resource):
             return jsonify({'email': email,'status_code':200})
         else:
             return jsonify({'error': 'User Not Found','status_code':404})
+        
+class GetInfluencerProfileResource(Resource):
+    def post(self):
+        influencer_id = request.json.get('influencer_id')
+        profiles = InfluencerProfile.query.filter_by(influencer_id=influencer_id).all()
+        if not profiles:
+            return jsonify({'followers': 0, 'platforms': 'None', 'niches': 'None', 'status_code':200})
+        followers_sum = sum(profile.followers for profile in profiles)
+        platforms = ', '.join(set(profile.platform for profile in profiles))
+        niches = ', '.join(set(profile.niche for profile in profiles))
+        return jsonify({'followers': followers_sum, 'platforms': platforms, 'niches': niches, 'status_code':200})
+
+

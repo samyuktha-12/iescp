@@ -202,3 +202,8 @@
 .notification.error {
     background-color: #dc3545; /* Red background for error */
 }
+
+.btn-edit{
+    background-color: #F6B17A;
+    font-weight: bold;
+}
