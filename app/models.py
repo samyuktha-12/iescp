@@ -53,3 +53,8 @@ class InfluencerProfile(db.Model):
     __table_args__ = (
         UniqueConstraint('influencer_id', 'platform', 'niche'),
     )
+
+class Negotiations(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ad_id = db.Column(db.Integer, db.ForeignKey('ad_request.id'), nullable=False)
+    new_amount = db.Column(db.Float, nullable=False)

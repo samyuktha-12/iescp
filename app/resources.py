@@ -1,7 +1,7 @@
 from flask import jsonify, request, url_for, session
 from flask_restful import Resource
 from app import db
-from app.models import User, Campaign, AdRequest, InfluencerProfile
+from app.models import User, Campaign, AdRequest, InfluencerProfile, Negotiations
 from app.forms import LoginForm, RegistrationForm, CampaignForm
 
 class IndexResource(Resource):
@@ -177,6 +177,32 @@ class EditInfluencerProfileResource(Resource):
             return jsonify({'status':'success','message': 'Profile inserted successfully', 'status_code': 200})
 
         return jsonify({'status':'error','message': 'Invalid action', 'status_code': 400})
+    
+class NegotiateAdRequestResource(Resource):
+    def post(self):
+        ad_request_id = request.json.get('ad_request_id')  
+        ad_request = AdRequest.query.get(ad_request_id)
+        if ad_request:
+            ad_request.status = 'Negotiated'
+            db.session.commit()
+            return jsonify({'message': 'Negotiation Initiated','status_code':200})
+        else:
+            return jsonify({'error': 'Ad request not found','status_code':404})
+        
+class AddNegotiationResource(Resource):
+    def post(self):
+        ad_request_id = request.json.get('ad_request_id')
+        new_amount = request.json.get('new_amount')
+        new_entry = Negotiations(
+            ad_id=ad_request_id,
+            new_amount=new_amount
+        )
+        db.session.add(new_entry)
+        db.session.commit()
+        return jsonify({'message': 'Negotiation inserted successfully', 'status_code': 200})
+
+
+
 
 
 

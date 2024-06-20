@@ -25,7 +25,8 @@
     <div class="campaign-section">
         <h3>Active Campaigns</h3>
         <div class="campaign-list">
-            {% for ad_request, campaign, sponsor_name in active_campaigns %}
+            {% if active_campaigns %}
+            {% for ad_request, campaign, sponsor_name, new_amount in active_campaigns %}
                 <div class="campaign-tab">
                     <div class="campaign-info">
                         <span><strong style="color:#1D24CA">Campaign : </strong> <b>{{ campaign.name }}</b></span>
@@ -42,13 +43,17 @@
                                 data-campaign-messages="{{ ad_request.messages }}">View</button>
                     </div>
                 </div>
-            {% endfor %}
+                {% endfor %}
+                {% else %}
+                <p style="text-align: center; font-size: large; font-weight: bold;">None to Show!</p>
+                {% endif %}
         </div>
     </div>
     <div class="request-section">
         <h3>New Ad Requests</h3>
         <div class="request-list">
-            {% for ad_request, campaign, sponsor_name in campaign_requests %}
+            {% if campaign_requests %}
+            {% for ad_request, campaign, sponsor_name, new_amount in campaign_requests %}
                 <div class="request-tab">
                     <div class="request-info">
                         <span><strong style="color:#1D24CA">Campaign : </strong> <b>{{ campaign.name }}</b></span>
@@ -62,12 +67,81 @@
                                 data-campaign-requirements="{{ ad_request.requirements }}"
                                 data-campaign-payment="{{ ad_request.payment_amount }}">View</button>
                         <button class="btn btn-accept" data-ad-request-id="{{ ad_request.id }}">Accept</button>
+                        <button class="btn btn-view btn-negotiate" data-ad-request-id="{{ ad_request.id }}">Negotiate</button>
                         <button class="btn btn-reject" data-ad-request-id="{{ ad_request.id }}">Reject</button>
+                    </div>
+                    <div class="negotiate-section" id="negotiate-section-{{ ad_request.id }}" style="display: none;">
+                        <form class="negotiation-form">
+                            <label for="new-amount-{{ ad_request.id }}" style="font-weight: bold;">New Amount:</label>
+                            <input type="text" id="new-amount-{{ ad_request.id }}" name="new-amount" style="border: 1px solid #1D24CA;">
+                            <button type="submit">Submit</button>
+                            <button type="button" class="btn btn-close">Close</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p style="text-align: center; font-size: large; font-weight: bold;">None to Show!</p>
+                {% endif %}
+        </div>
+    </div>
+    <div class="campaign-section">
+        <h3>Negotiated Campaigns</h3>
+        <div class="campaign-list">
+            {% if negotiated_requests %}
+            {% for ad_request, campaign, sponsor_name, new_amount in negotiated_requests %}
+                <div class="campaign-tab">
+                    <div class="campaign-info">
+                        <span><strong style="color:#1D24CA">Campaign : </strong> <b>{{ campaign.name }}</b></span>
+                        <span><strong style="color:#1D24CA">Amount By Sponsor : </strong> <b>{{ ad_request.payment_amount }}</b></span>
+                        <span><strong style="color:#1D24CA">Negotiated Amount : </strong> <b>{{ new_amount }}</b></span>
+                    </div>
+                    <div class="campaign-actions">
+                        <button class="btn btn-view" data-toggle="modal" data-target="#campaignModal" 
+                                data-campaign-name="{{ campaign.name }}"
+                                data-sponsor-name="{{sponsor_name}}"
+                                data-campaign-description="{{ campaign.description }}"
+                                data-campaign-requirements="{{ ad_request.requirements }}"
+                                data-campaign-payment="{{ ad_request.payment_amount }}"
+                                data-campaign-status="{{ ad_request.status }}"
+                                data-campaign-messages="{{ ad_request.messages }}">View</button>
                     </div>
                 </div>
             {% endfor %}
+            {% else %}
+            <p style="text-align: center; font-size: large; font-weight: bold;">None to Show!</p>
+            {% endif %}
         </div>
     </div>
+    <div class="campaign-section">
+        <h3>Completed Campaigns</h3>
+        <div class="campaign-list">
+            {% if completed_campaigns %}
+            {% for ad_request, campaign, sponsor_name,new_amount in completed_campaigns %}
+                <div class="campaign-tab">
+                    <div class="campaign-info">
+                        <span><strong style="color:#1D24CA">Campaign : </strong> <b>{{ campaign.name }}</b></span>
+                        <span><strong style="color:#1D24CA">Sponsor : </strong> <b>{{ sponsor_name }}</b></span>
+                    </div>
+                    <div class="campaign-actions">
+                        <button class="btn btn-view" data-toggle="modal" data-target="#campaignModal" 
+                                data-campaign-name="{{ campaign.name }}"
+                                data-sponsor-name="{{sponsor_name}}"
+                                data-campaign-description="{{ campaign.description }}"
+                                data-campaign-requirements="{{ ad_request.requirements }}"
+                                data-campaign-payment="{{ ad_request.payment_amount }}"
+                                data-campaign-status="{{ ad_request.status }}"
+                                data-campaign-messages="{{ ad_request.messages }}">View</button>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p style="text-align: center; font-size: large; font-weight: bold;">None to Show!</p>
+                {% endif %}
+        </div>
+    </div>
+    <br>
+    <br>
 
     <!-- Modal -->
     <div class="modal fade" id="campaignModal" tabindex="-1" role="dialog" aria-labelledby="campaignModalLabel" aria-hidden="true">
@@ -160,11 +234,6 @@
                         </table>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-accept" data-dismiss="modal">Accept</button>
-                    <button type="button" class="btn btn-view" data-dismiss="modal">Negotiate</button>
-                    <button type="button" class="btn btn-reject" data-dismiss="modal">Reject</button>
-                </div>
             </div>
         </div>
     </div>
@@ -251,6 +320,8 @@
                 </div>
             </div>
         </div>
+
+
 
 </div>
 {% endblock %}

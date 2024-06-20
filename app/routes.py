@@ -2,10 +2,11 @@
 from flask import render_template, flash, redirect, url_for, session
 from app import app, db, api
 from app.forms import LoginForm, RegistrationForm, CampaignForm
-from app.models import User, Campaign, AdRequest
-from app.resources import IndexResource, LoginResource, RegisterResource, CreateCampaignResource, AcceptAdRequestResource,RejectAdRequestResource, GetUserProfileResource, GetInfluencerProfileResource, ViewInfluencerProfileResource, EditInfluencerProfileResource
+from app.models import User, Campaign, AdRequest, Negotiations
+from app.resources import IndexResource, LoginResource, RegisterResource, CreateCampaignResource, AcceptAdRequestResource,RejectAdRequestResource, GetUserProfileResource, GetInfluencerProfileResource, ViewInfluencerProfileResource, EditInfluencerProfileResource, NegotiateAdRequestResource, AddNegotiationResource
 import requests
 from datetime import datetime
+from sqlalchemy import func
 
 @app.route('/')
 @app.route('/index')
@@ -92,39 +93,51 @@ def influencer_dashboard():
 
     # Fetch ad requests for the logged-in influencer and include sponsor name
     ad_requests = db.session.query(
-        AdRequest, Campaign, User.username.label('sponsor_name')
+    AdRequest,
+    Campaign,
+    User.username.label('sponsor_name'),
+    func.coalesce(Negotiations.new_amount, 0.0).label('new_amount')
     ).join(Campaign, AdRequest.campaign_id == Campaign.id
     ).join(User, Campaign.sponsor_id == User.id
+    ).outerjoin(Negotiations, AdRequest.id == Negotiations.ad_id
     ).filter(
-        AdRequest.influencer_id == user_id
+    AdRequest.influencer_id == user_id
     ).all()
 
     active_campaigns = []
     campaign_requests = []
     completed = []
+    negotiated = []
+    others = []
     current_date = datetime.utcnow()
     
-    for ad_request, campaign, sponsor_name in ad_requests:
+    for ad_request, campaign, sponsor_name, new_amount in ad_requests:
         #if campaign.start_date <= current_date <= campaign.end_date and ad_request.status in ['Accepted']:
         if ad_request.status in ['Accepted']:
-            active_campaigns.append((ad_request, campaign, sponsor_name))
+            active_campaigns.append((ad_request, campaign, sponsor_name, new_amount))
         #elif campaign.start_date <= current_date <= campaign.end_date and ad_request.status in ['Pending']:
-        if ad_request.status in ['Pending']:
-            campaign_requests.append((ad_request, campaign, sponsor_name))
+        elif ad_request.status in ['Pending']:
+            campaign_requests.append((ad_request, campaign, sponsor_name, new_amount))
+        elif ad_request.status in ['Completed']:
+            completed.append((ad_request, campaign, sponsor_name, new_amount))
+        elif ad_request.status in ['Negotiated']:
+            negotiated.append((ad_request, campaign, sponsor_name, new_amount))
         else:
-            completed.append((ad_request, campaign, sponsor_name))
+            others.append((ad_request, campaign, sponsor_name, new_amount))
             
     # Calculate total earnings from completed campaigns
     total_earnings = db.session.query(db.func.sum(AdRequest.payment_amount)).filter_by(
         influencer_id=user_id,
         status='Completed'
-    ).scalar() or 0.0
+    ).scalar() or 0.00
 
     return render_template('influencer_dashboard.html',
                            username=user.username,
                            active_campaigns=active_campaigns,
                            campaign_requests=campaign_requests,
-                           total_earnings=total_earnings, 
+                           total_earnings=total_earnings,
+                           completed_campaigns=completed,
+                           negotiated_requests=negotiated, 
                            title='Influencer Dashboard', 
                            active_page='profile')
 
@@ -161,3 +174,5 @@ api.add_resource(GetUserProfileResource, '/api/getuser')
 api.add_resource(GetInfluencerProfileResource, '/api/getinfluencer')
 api.add_resource(ViewInfluencerProfileResource, '/api/fetchinfluencerprofile')
 api.add_resource(EditInfluencerProfileResource, '/api/editinfluencerprofile')
+api.add_resource(NegotiateAdRequestResource, '/api/campaign/negotiate')
+api.add_resource(AddNegotiationResource, '/api/campaign/addnegotiation')

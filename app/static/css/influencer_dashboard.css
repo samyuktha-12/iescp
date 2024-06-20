@@ -208,27 +208,6 @@
     font-weight: bold;
 }
 
-/* Styles for the plus button */
-.btn-add-profile {
-    border-radius: 50%;
-    background-color: #FFFFFF; 
-    color: #007BFF; 
-    border: 1px solid #007BFF; 
-    padding: 2px 12px; 
-    cursor: pointer; 
-    margin-left: 45%;
-}
-
-.btn-add-profile .plus-icon {
-    font-size: 20px; /* Size of the plus icon */
-    vertical-align: middle; /* Center vertically */
-}
-
-.btn-add-profile:hover {
-    background-color: #007BFF; /* Blue background on hover */
-    color: #FFFFFF; /* White text color on hover */
-}
-
 .modal-content {
     width: 150%;
 }
@@ -256,4 +235,12 @@ input{
 
 .table-responsive{
     overflow-x: hidden;
+}
+
+.btn-negotiate{
+    background-color: #D6589F;
+}
+
+.btn-negotiate:hover {
+    background-color: #FF407D;
 }

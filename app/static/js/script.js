@@ -475,6 +475,117 @@ document.addEventListener('DOMContentLoaded', function() {
 
     });
 
+    document.addEventListener('DOMContentLoaded', function() {
+        var negotiateButtons = document.querySelectorAll('.btn-negotiate');
+        var closeButtons = document.querySelectorAll('.btn-close');
+    
+        negotiateButtons.forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                console.log("Negotiate Button Clicked");
+                var requestId = this.getAttribute('data-ad-request-id');
+                console.log(requestId);
+                var negotiateSection = document.getElementById('negotiate-section-' + requestId);
+                negotiateSection.style.display = 'block';
+            });
+        });
+    
+        closeButtons.forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                var requestId = this.closest('.negotiate-section').getAttribute('id').split('-')[2];
+                var negotiateSection = document.getElementById('negotiate-section-' + requestId);
+                negotiateSection.style.display = 'none';
+            });
+        });
+    
+        // Prevent form submission for demonstration purposes
+        document.querySelectorAll('.negotiation-form').forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                var newAmount = this.querySelector('input[name="new-amount"]').value;
+                var requestId = this.closest('.negotiate-section').getAttribute('id').split('-')[2];
+                var negotiateSection = document.getElementById('negotiate-section-' + requestId);
+                negotiateSection.style.display = 'none';
+                var apiUrl = '/api/campaign/negotiate';
+                var requestData = {
+                ad_request_id: requestId
+                };
+
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    showNotification(data.message || 'Negotiation Initiated', 'success');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000); 
+                })
+                .catch(function(error) {
+                    console.error('Error Initiating Negotiation', error);
+                    showNotification('Error Initiating Negotiation', 'error');
+
+                });
+                function showNotification(message, type) {
+                    var notification = document.getElementById('notification');
+                    notification.textContent = message;
+                    notification.className = 'notification ' + (type || 'error');
+                    notification.style.display = 'block';
+                    setTimeout(function() {
+                        notification.style.display = 'none';
+                    }, 5000); 
+                }
+
+            });
+        });
+
+        document.querySelectorAll('.negotiation-form').forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                var newAmount = this.querySelector('input[name="new-amount"]').value;
+                var requestId = this.closest('.negotiate-section').getAttribute('id').split('-')[2];
+                var negotiateSection = document.getElementById('negotiate-section-' + requestId);
+                negotiateSection.style.display = 'none';
+                var apiUrl = '/api/campaign/addnegotiation';
+                var requestData = {
+                ad_request_id: requestId,
+                new_amount: newAmount
+                };
+
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    console.log(data.message);
+                })
+                .catch(function(error) {
+                    console.error('Error Initiating Negotiation', error);
+                });
+
+            });
+        });
+    });
+    
+    
+    
 
     
     
