@@ -107,5 +107,76 @@ class GetInfluencerProfileResource(Resource):
         platforms = ', '.join(set(profile.platform for profile in profiles))
         niches = ', '.join(set(profile.niche for profile in profiles))
         return jsonify({'followers': followers_sum, 'platforms': platforms, 'niches': niches, 'status_code':200})
+    
+class ViewInfluencerProfileResource(Resource):
+    def post(self):
+        influencer_id = request.json.get('influencer_id')
+        profiles = InfluencerProfile.query.filter_by(influencer_id=influencer_id).all()
+
+        if not profiles:
+            return jsonify({
+            'profile_ids':[],
+            'followers': [],
+            'platforms': [],
+            'niches': [],
+            'status_code': 200
+            })
+        
+        profile_ids = [profile.id for profile in profiles]
+        followers = [profile.followers for profile in profiles]
+        platforms = [profile.platform for profile in profiles]
+        niches = [profile.niche for profile in profiles]
+        return jsonify({
+        'profile_ids':profile_ids,   
+        'followers': followers,
+        'platforms': platforms,
+        'niches': niches,
+        'status_code': 200
+        })
+    
+class EditInfluencerProfileResource(Resource):
+    def post(self):
+        action = request.json.get('action')
+        profile_id = request.json.get('profileId')
+        influencer_id = request.json.get('influencer_id')
+        platform = request.json.get('platform')
+        niche = request.json.get('niche')
+        followers = request.json.get('followers')
+
+        if action == 'edit':
+            profile = InfluencerProfile.query.filter_by(id=profile_id, influencer_id=influencer_id).first()
+            if profile:
+                try:
+                    profile.platform = platform
+                    profile.niche = niche
+                    profile.followers = followers
+                    db.session.commit()
+                    return jsonify({'status':'success','message': 'Profile updated successfully', 'status_code': 200})
+                except Exception:
+                    db.session.rollback()
+                    return jsonify({'status':'error','message': 'Error - Platform + Niche Combination must be unique.', 'status_code': 500})
+            return jsonify({'status':'error','message': 'Profile not found', 'status_code': 404})
+
+        elif action == 'delete':
+            profile = InfluencerProfile.query.filter_by(id=profile_id, influencer_id=influencer_id).first()
+            if profile:
+                db.session.delete(profile)
+                db.session.commit()
+                return jsonify({'message': 'Profile Entry deleted successfully', 'status_code': 200})
+            return jsonify({'message': 'Profile not found', 'status_code': 404})
+
+        elif action == 'insert':
+            new_profile = InfluencerProfile(
+                influencer_id=influencer_id,
+                platform=platform,
+                niche=niche,
+                followers=followers
+            )
+            db.session.add(new_profile)
+            db.session.commit()
+            return jsonify({'status':'success','message': 'Profile inserted successfully', 'status_code': 200})
+
+        return jsonify({'status':'error','message': 'Invalid action', 'status_code': 400})
+
 
 

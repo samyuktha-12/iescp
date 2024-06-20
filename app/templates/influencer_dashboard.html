@@ -213,12 +213,43 @@
                 </div>
                 <div class="modal-footer">
                     <div class="d-flex justify-content-between w-100">
-                        <button type="button" class="btn btn-edit" data-dismiss="modal">Edit</button>
+                        <button type="button" class="btn btn-edit" data-toggle="modal" data-target="#editModal">Edit</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
         </div>
+        
+    </div>
+
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel" style="font-weight: bold;">Edit Influencer Profiles</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="text-align: center;">Platform</th>
+                                <th style="text-align: center;">Niche</th>
+                                <th style="text-align: center;">Followers</th>
+                                <th style="text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="profile-table-body">
+                            <!-- Table rows will be populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
 
 </div>

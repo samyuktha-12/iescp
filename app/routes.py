@@ -3,7 +3,7 @@ from flask import render_template, flash, redirect, url_for, session
 from app import app, db, api
 from app.forms import LoginForm, RegistrationForm, CampaignForm
 from app.models import User, Campaign, AdRequest
-from app.resources import IndexResource, LoginResource, RegisterResource, CreateCampaignResource, AcceptAdRequestResource,RejectAdRequestResource, GetUserProfileResource, GetInfluencerProfileResource
+from app.resources import IndexResource, LoginResource, RegisterResource, CreateCampaignResource, AcceptAdRequestResource,RejectAdRequestResource, GetUserProfileResource, GetInfluencerProfileResource, ViewInfluencerProfileResource, EditInfluencerProfileResource
 import requests
 from datetime import datetime
 
@@ -159,3 +159,5 @@ api.add_resource(AcceptAdRequestResource, '/api/campaign/accept')
 api.add_resource(RejectAdRequestResource, '/api/campaign/reject')
 api.add_resource(GetUserProfileResource, '/api/getuser')
 api.add_resource(GetInfluencerProfileResource, '/api/getinfluencer')
+api.add_resource(ViewInfluencerProfileResource, '/api/fetchinfluencerprofile')
+api.add_resource(EditInfluencerProfileResource, '/api/editinfluencerprofile')

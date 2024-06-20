@@ -196,7 +196,7 @@
     background-color: #28a745; /* Green background for success */
     color: white;
     border-radius: 5px;
-    z-index: 1000;
+    z-index: 1100;
 }
 
 .notification.error {
@@ -206,4 +206,54 @@
 .btn-edit{
     background-color: #F6B17A;
     font-weight: bold;
+}
+
+/* Styles for the plus button */
+.btn-add-profile {
+    border-radius: 50%;
+    background-color: #FFFFFF; 
+    color: #007BFF; 
+    border: 1px solid #007BFF; 
+    padding: 2px 12px; 
+    cursor: pointer; 
+    margin-left: 45%;
+}
+
+.btn-add-profile .plus-icon {
+    font-size: 20px; /* Size of the plus icon */
+    vertical-align: middle; /* Center vertically */
+}
+
+.btn-add-profile:hover {
+    background-color: #007BFF; /* Blue background on hover */
+    color: #FFFFFF; /* White text color on hover */
+}
+
+.modal-content {
+    width: 150%;
+}
+
+button, input, optgroup, select, textarea {
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    border: none;
+    text-align: center;
+}
+
+.table {
+    width: 105%;
+    margin-bottom: 1rem;
+    color: #212529;
+    margin-left: -10px;
+    overflow: hidden;
+}
+
+input{
+    width: 60px;
+}
+
+.table-responsive{
+    overflow-x: hidden;
 }
