@@ -20,9 +20,18 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item{% if active_page == 'profile' %}-active{% endif %}">
-                    <a class="nav-link" href="{{ url_for('influencer_dashboard') }}">Profile</a>
+                    {% if session['role'] == 'influencer' %}
+                        <a class="nav-link" href="{{ url_for('influencer_dashboard') }}">Profile</a>
+                    {% elif session['role'] == 'sponsor' %}
+                        <a class="nav-link" href="{{ url_for('sponsor_dashboard') }}">Profile</a>
+                    {% elif session['role'] == 'admin' %}
+                        <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Profile</a>
+                    {% else %}
+                        <a class="nav-link" href="{{ url_for('login') }}">Profile</a>
+                    {% endif %}
                 </li>
-                {% if session['role'] == 'sponsor' %}
+                
+                {% if session['role'] =='sponsor' %}
                 <li class="nav-item{% if active_page == 'campaigns' %}-active{% endif %}">
                     <a class="nav-link" href="#">Campaigns</a>
                 </li>

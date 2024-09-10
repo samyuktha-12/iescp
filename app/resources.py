@@ -21,11 +21,11 @@ class LoginResource(Resource):
             session['role'] = user.role
 
             if user.role == 'admin':
-                return jsonify({"redirect_url": url_for('admin_dashboard'),"status_code":200,"user_id":user.id})
+                return jsonify({"redirect_url": url_for('admin_dashboard', role=user.role),"status_code":200,"user_id":user.id,"role":user.role})
             elif user.role == 'sponsor':
-                return jsonify({"redirect_url": url_for('sponsor_dashboard'),"status_code":200,"user_id":user.id})
+                return jsonify({"redirect_url": url_for('sponsor_dashboard', role=user.role),"status_code":200,"user_id":user.id, "role":user.role})
             elif user.role == 'influencer':
-                return jsonify({"redirect_url": url_for('influencer_dashboard'),"status_code":200,"user_id":user.id})
+                return jsonify({"redirect_url": url_for('influencer_dashboard', role=user.role),"status_code":200,"user_id":user.id, "role":user.role})
             else:
                 return jsonify({"message": "Invalid username or password","status_code":401})
         

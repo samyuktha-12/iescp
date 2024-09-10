@@ -30,6 +30,7 @@ def login():
             if 'redirect_url' in json_response:
                 redirect_url = json_response['redirect_url']
                 session['user_id']=json_response['user_id']
+                session['role']=json_response['role']
                 return redirect(redirect_url)
             else:
                 flash(json_response.get('message', 'Login failed'))
@@ -213,8 +214,6 @@ def create_campaign():
         flash('Campaign created successfully!')
         return redirect(url_for('sponsor_dashboard'))
     return render_template('create_campaign.html', title='Create Campaign', form=form)
-
-
 
 
 # Add API resource routes
