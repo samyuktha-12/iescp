@@ -497,7 +497,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     
-        // Prevent form submission for demonstration purposes
+        
         document.querySelectorAll('.negotiation-form').forEach(function(form) {
             form.addEventListener('submit', function(event) {
                 event.preventDefault();
@@ -583,6 +583,104 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('click', function(event) {
+            if (event.target.closest('#button-container-pending, #button-container-rejected')) {
+                const adRequestId = event.target.dataset.adRequestId;
+                const messages = event.target.dataset.messages;
+                const requirements = event.target.dataset.requirements;
+                const paymentAmount = event.target.dataset.paymentAmount;
+                console.log("EDIT CLICKED");
+    
+                fetch(`/api/ad-request/details/${adRequestId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('adRequestId').value = adRequestId;
+                    document.getElementById('campaignName').value = data.campaign_name;
+                    document.getElementById('messages').value = messages;
+                    document.getElementById('requirements').value = requirements;
+                    document.getElementById('payment').value = paymentAmount;
+    
+                    fetch(`/api/influencers/${adRequestId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const influencerSelect = document.getElementById('influencer');
+                        influencerSelect.innerHTML = ''; 
+                        data.influencers.forEach(influencer => {
+                            const option = document.createElement('option');
+                            option.value = influencer.id;
+                            option.textContent = influencer.username;
+                            influencerSelect.appendChild(option);
+                        });
+    
+                        influencerSelect.value = data.assigned_influencer || '';
+    
+                        $('#editAdRequestModal').modal('show');
+                    })
+                    .catch(error => console.error('Error fetching influencers:', error));
+                })
+                .catch(error => console.error('Error fetching ad request details:', error));
+            }
+        });
+    });
+
+    document.getElementById('saveChangesBtn').addEventListener('click', function() {
+        var adRequestId = document.getElementById('adRequestId').value;
+        var campaignName = document.getElementById('campaignName').value;
+        var messages = document.getElementById('messages').value;
+        var requirements = document.getElementById('requirements').value;
+        var paymentAmount = document.getElementById('payment').value;
+        var selectedInfluencer = document.getElementById('influencer').value;
+
+        var apiUrl = '/api/ad_requests/update/' + adRequestId;
+
+        var requestData = {
+            campaignName: campaignName,
+            messages: messages,
+            requirements: requirements,
+            paymentAmount: paymentAmount,
+            influencerId: selectedInfluencer
+        };
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            showNotification(data.message || 'Ad Request Updated Successfully', 'success');
+            setTimeout(function() {
+                $('#editAdRequestModal').modal('hide');
+                location.reload(); 
+            }, 2000); 
+        })
+        .catch(function(error) {
+            console.error('Error Updating Ad Request', error);
+            showNotification('Error Updating Ad Request', 'error');
+        });
+
+        function showNotification(message, type) {
+            var notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification ' + (type || 'error');
+            notification.style.display = 'block';
+            setTimeout(function() {
+                notification.style.display = 'none';
+            }, 5000); 
+        }
+    });
+
+
+    
     
     
     

@@ -1,0 +1,217 @@
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the entire section */
+    gap: 20px; /* Adjust spacing between the avatar and welcome text */
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding-top: 20px;
+    padding-left: 20px;
+}
+
+.avatar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center align the avatar and role tag */
+}
+
+.avatar {
+    width: 100px; /* Adjust size of the avatar circle */
+    height: 100px;
+    border-radius: 50%; /* Creates a round shape */
+    overflow: hidden; /* Ensures image stays within the circle */
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Maintain aspect ratio and cover the circle */
+}
+
+.role-tag {
+    font-size: 14px;
+    color: #666; /* Adjust color as needed */
+    margin-top: 5px; /* Adjust spacing between avatar and role tag */
+    text-align: center; /* Center align the role tag */
+}
+
+.welcome-text h2 {
+    margin-top: -10px;
+}
+
+.campaign-section,
+.request-section {
+    padding: 20px;
+    border-radius: 8px;
+    h3{
+        font-weight: bold;
+    }
+}
+
+.campaign-section{
+    background-image: linear-gradient(to right,#DBE2EF 65%,#F9F7F7 );
+    box-shadow: 2px 2px 4px rgb(0,0,0,0.3);
+}
+
+.request-section {
+    background-image: linear-gradient(to right,#DBE2EF 65%,#F9F7F7 );
+    box-shadow: 2px 2px 4px rgb(0,0,0,0.3);
+}
+
+.campaign-list, .request-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.campaign-tab, .request-tab {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.campaign-info, .request-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.campaign-actions, .request-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.campaign-actions .btn,
+.request-actions .btn {
+    margin-left: auto; /* Moves the buttons to the right */
+}
+
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-view {
+    background-color: #3F72AF;
+    color: #fff;
+    box-shadow: 1px 1px 2px rgb(0,0,0,0.1);
+}
+
+.btn-view:hover {
+    background-color: #0056b3;
+    color: #fff;
+}
+
+.btn-accept {
+    background-color: #2D9596;
+    color: #fff;
+    box-shadow: 1px 1px 2px rgb(0,0,0,0.1);
+}
+
+.btn-accept:hover {
+    background-color: #218838;
+    color: #fff;
+}
+
+.btn-reject {
+    background-color: #F05454;
+    color: #fff;
+    box-shadow: 1px 1px 2px rgb(0,0,0,0.1);
+}
+
+.btn-reject:hover {
+    background-color: #c82333;
+    color: #fff;
+}
+
+.party-popper {
+    display: inline-block;
+    animation: wave 2s infinite;
+    transform-origin: 70% 70%;
+}
+
+@keyframes wave {
+    0% { transform: rotate(0deg); }
+    10% { transform: rotate(14deg); }
+    20% { transform: rotate(-8deg); }
+    30% { transform: rotate(14deg); }
+    40% { transform: rotate(-4deg); }
+    50% { transform: rotate(10deg); }
+    60% { transform: rotate(0deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.table-borderless {
+    border-collapse: collapse; /* Ensure cells are close to each other */
+    width: 100%;
+}
+
+.table-borderless th,
+.table-borderless td {
+    border: none; /* Remove borders from table cells */
+    padding: 8px 16px; /* Adjust padding as needed */
+}
+
+.table-borderless th {
+    text-align: left;
+    width: 30%; /* Set width for table headers */
+}
+
+.table-borderless td {
+    text-align: left;
+}
+
+.modal-body {
+    padding: 20px; /* Adequate padding around content */
+}
+
+.btn-secondary{
+    background-color: #3F72AF;
+}
+
+.notification {
+    display: none;
+    position: fixed;
+    top: 60px;
+    right: 2px;
+    padding: 10px 20px;
+    background-color: #28a745; /* Green background for success */
+    color: white;
+    border-radius: 5px;
+    z-index: 1100;
+}
+
+.notification.error {
+    background-color: #dc3545; /* Red background for error */
+}
+
+.btn-edit{
+    background-color: #F6B17A;
+    font-weight: bold;
+}
+
+.modal-content {
+    width: 150%;
+}
+
+
+.btn-negotiate{
+    background-color: #D6589F;
+}
+
+.btn-negotiate:hover {
+    background-color: #FF407D;
+}

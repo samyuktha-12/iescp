@@ -58,7 +58,7 @@ class CreateCampaignResource(Resource):
                 budget=form.budget.data,
                 visibility=form.visibility.data,
                 goals=form.goals.data,
-                sponsor=form.sponsor.data  # Adjust this line based on your form
+                sponsor=form.sponsor.data  
             )
             db.session.add(campaign)
             db.session.commit()
@@ -67,7 +67,7 @@ class CreateCampaignResource(Resource):
     
 class AcceptAdRequestResource(Resource):
     def post(self):
-        ad_request_id = request.json.get('ad_request_id')  # Assuming ad_request_id is sent from client
+        ad_request_id = request.json.get('ad_request_id')  
         ad_request = AdRequest.query.get(ad_request_id)
         if ad_request:
             ad_request.status = 'Accepted'
@@ -200,6 +200,40 @@ class AddNegotiationResource(Resource):
         db.session.add(new_entry)
         db.session.commit()
         return jsonify({'message': 'Negotiation inserted successfully', 'status_code': 200})
+    
+class AdRequestDetailsResource(Resource):
+    def get(self, ad_request_id):
+        ad_request = AdRequest.query.get_or_404(ad_request_id)
+        campaign = Campaign.query.get_or_404(ad_request.campaign_id)
+        return jsonify({
+            'campaign_name': campaign.name,
+        })
+    
+class GetInfluencersResource(Resource):
+    def get(self, ad_request_id):
+        ad_request = AdRequest.query.get_or_404(ad_request_id)
+        influencers = User.query.filter_by(role='influencer').all()
+        return jsonify({
+            'influencers': [{'id': influencer.id, 'username': influencer.username} for influencer in influencers],
+            'assigned_influencer': ad_request.influencer_id
+        })
+    
+class UpdateAdRequestResource(Resource):
+    def post(self, ad_request_id):
+        ad_request = AdRequest.query.get_or_404(ad_request_id)
+        
+        data = request.get_json()
+        
+        ad_request.messages = data.get('messages', ad_request.messages)
+        ad_request.requirements = data.get('requirements', ad_request.requirements)
+        ad_request.payment_amount = data.get('paymentAmount', ad_request.payment_amount)
+        
+        try:
+            db.session.commit()
+            return jsonify({'success': True})
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'success': False, 'error': str(e)}), 400
 
 
 

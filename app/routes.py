@@ -3,10 +3,11 @@ from flask import render_template, flash, redirect, url_for, session
 from app import app, db, api
 from app.forms import LoginForm, RegistrationForm, CampaignForm
 from app.models import User, Campaign, AdRequest, Negotiations
-from app.resources import IndexResource, LoginResource, RegisterResource, CreateCampaignResource, AcceptAdRequestResource,RejectAdRequestResource, GetUserProfileResource, GetInfluencerProfileResource, ViewInfluencerProfileResource, EditInfluencerProfileResource, NegotiateAdRequestResource, AddNegotiationResource
+from app.resources import IndexResource, LoginResource, RegisterResource, CreateCampaignResource, AcceptAdRequestResource,RejectAdRequestResource, GetUserProfileResource, GetInfluencerProfileResource, ViewInfluencerProfileResource, EditInfluencerProfileResource, NegotiateAdRequestResource, AddNegotiationResource, AdRequestDetailsResource, GetInfluencersResource, UpdateAdRequestResource
 import requests
 from datetime import datetime
 from sqlalchemy import func
+from sqlalchemy.orm import aliased
 
 @app.route('/')
 @app.route('/index')
@@ -78,11 +79,6 @@ def admin_dashboard():
     # Implement admin dashboard view logic here
     return render_template('admin_dashboard.html', title='Admin Dashboard')
 
-@app.route('/sponsor/dashboard')
-def sponsor_dashboard():
-    # Implement sponsor dashboard view logic here
-    return render_template('sponsor_dashboard.html', title='Sponsor Dashboard')
-
 @app.route('/influencer/dashboard')
 def influencer_dashboard():
     user_id = session.get('user_id')  # Assuming user_id is stored in session after login
@@ -141,6 +137,62 @@ def influencer_dashboard():
                            title='Influencer Dashboard', 
                            active_page='profile')
 
+@app.route('/sponsor/dashboard')
+def sponsor_dashboard():
+    user_id = session.get('user_id') 
+    user = User.query.get(user_id)
+    if not user or user.role != 'sponsor':
+        return redirect(url_for('login'))
+    negotiations = aliased(Negotiations)
+    ad_requests = db.session.query(
+        AdRequest,
+        Campaign,
+        User.username.label('influencer_name'),
+        func.coalesce(negotiations.new_amount, 0.0).label('new_amount')
+        ).join(
+            Campaign,
+            AdRequest.campaign_id == Campaign.id
+        ).join(
+            User,
+            User.id == AdRequest.influencer_id
+        ).outerjoin(
+            negotiations,
+            AdRequest.id == negotiations.ad_id
+        ).filter(
+            Campaign.sponsor_id == user_id 
+        ).all()
+
+
+    pending_requests = []
+    accepted_requests = []
+    rejected_requests = []
+    negotiated_requests = []
+    others=[]
+    
+    for ad_request, campaign, influencer_name, new_amount in ad_requests:
+        #if campaign.start_date <= current_date <= campaign.end_date and ad_request.status in ['Accepted']:
+        if ad_request.status in ['Accepted']:
+            accepted_requests.append((ad_request, campaign, influencer_name, new_amount))
+        #elif campaign.start_date <= current_date <= campaign.end_date and ad_request.status in ['Pending']:
+        elif ad_request.status in ['Pending']:
+            pending_requests.append((ad_request, campaign, influencer_name, new_amount))
+        elif ad_request.status in ['Completed']:
+            rejected_requests.append((ad_request, campaign, influencer_name, new_amount))
+        elif ad_request.status in ['Negotiated']:
+            negotiated_requests.append((ad_request, campaign, influencer_name, new_amount))
+        else:
+            others.append((ad_request, campaign, influencer_name, new_amount))
+
+    return render_template('sponsor_dashboard.html',
+                           username=user.username,
+                           accepted_requests=accepted_requests,
+                           pending_requests=pending_requests,
+                           rejected_requests=rejected_requests,
+                           negotiated_requests=negotiated_requests,
+                           influencer_name=influencer_name, 
+                           title='Sponsor Dashboard', 
+                           active_page='profile')
+
 
 @app.route('/campaign/create', methods=['GET', 'POST'])
 def create_campaign():
@@ -163,6 +215,8 @@ def create_campaign():
     return render_template('create_campaign.html', title='Create Campaign', form=form)
 
 
+
+
 # Add API resource routes
 api.add_resource(IndexResource, '/api/')
 api.add_resource(LoginResource, '/api/login')
@@ -176,3 +230,6 @@ api.add_resource(ViewInfluencerProfileResource, '/api/fetchinfluencerprofile')
 api.add_resource(EditInfluencerProfileResource, '/api/editinfluencerprofile')
 api.add_resource(NegotiateAdRequestResource, '/api/campaign/negotiate')
 api.add_resource(AddNegotiationResource, '/api/campaign/addnegotiation')
+api.add_resource(AdRequestDetailsResource, '/api/ad-request/details/<int:ad_request_id>')
+api.add_resource(GetInfluencersResource, '/api/influencers/<int:ad_request_id>')
+api.add_resource(UpdateAdRequestResource, '/api/ad_requests/update/<int:ad_request_id>')

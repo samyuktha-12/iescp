@@ -53,7 +53,7 @@
         <h3>New Ad Requests</h3>
         <div class="request-list">
             {% if campaign_requests %}
-            {% for ad_request, campaign, sponsor_name, new_amount in campaign_requests %}
+            {% for ad_request, campaign, sponsor_name,new_amount in campaign_requests %}
                 <div class="request-tab">
                     <div class="request-info">
                         <span><strong style="color:#1D24CA">Campaign : </strong> <b>{{ campaign.name }}</b></span>
@@ -320,8 +320,5 @@
                 </div>
             </div>
         </div>
-
-
-
 </div>
 {% endblock %}
