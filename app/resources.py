@@ -268,6 +268,63 @@ class DeleteAdRequestResource(Resource):
         except Exception as e:
             db.session.rollback()
             return jsonify({'success': False, 'error': str(e)}), 400
+        
+class CampaignDetailsResource(Resource):
+    def get(self, campaign_id):
+        campaign = Campaign.query.get_or_404(campaign_id)
+        print(campaign.name)
+        return jsonify({
+            'campaign_name': campaign.name,
+            'campaign_description': campaign.description,
+            'campaign_start_date': campaign.start_date.strftime('%d-%m-%Y') if campaign.start_date else None,
+            'campaign_end_date': campaign.end_date.strftime('%d-%m-%Y') if campaign.end_date else None,
+            'campaign_budget': campaign.budget,
+            'campaign_visibility': campaign.visibility,
+            'campaign_goals': campaign.goals,
+        })
+    
+class DeleteCampaignResource(Resource):
+    def post(self, campaign_id):
+        campaign = Campaign.query.get_or_404(campaign_id)
+        subquery = (
+            db.session.query(AdRequest.id)
+            .filter(AdRequest.campaign_id == campaign_id)
+            .subquery()
+        )
+        try:
+            db.session.query(Negotiations).filter(Negotiations.ad_id.in_(subquery)).delete(synchronize_session=False)
+            AdRequest.query.filter_by(campaign_id=campaign_id).delete()
+            db.session.delete(campaign)
+            db.session.commit()
+            response = jsonify({'success': True})
+            return response
+        except Exception as e:
+            response = jsonify({'success': False, 'error': str(e)}) 
+            return response, 400
+        
+class UpdateCampaignResource(Resource):
+    def post(self, campaign_id):
+        campaign = Campaign.query.get_or_404(campaign_id)
+        
+        data = request.get_json()
+
+        new_name = data.get('campaignName')
+        new_goals = data.get('goals', campaign.goals)
+        new_visibility = data.get('visibility', campaign.visibility)
+        new_budget = data.get('budget', campaign.budget)
+
+        campaign.name = new_name if new_name else campaign.name
+        campaign.goals = new_goals
+        campaign.visibility = new_visibility
+        campaign.budget = new_budget
+
+        try:
+            db.session.commit()
+            return jsonify({'success': True, 'message': 'Campaign updated successfully!'})
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'success': False, 'error': str(e)}), 500
+    
 
 
 

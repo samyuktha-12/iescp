@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+<div class="campaigns">
 <div id="notification" class="notification"></div>
 <div class="container mt-4">
     <div class="d-flex justify-content-between mb-4">
@@ -17,9 +18,13 @@
             <div class="col-md-4">
                 <div class="card campaign-card">
                     <div class="card-body">
-                        <h4 class="card-title">{{ campaign.name }}</h5>
-                            <hr>
-                        <a href="{{ url_for('campaign', campaign_id=campaign.id) }}" class="btn btn-secondary gradient">View Campaign</a>
+                        <h4 class="card-title">{{ campaign.name }}</h4>
+                        <div class="btn-container">
+                            <a href="{{ url_for('campaign', campaign_id=campaign.id) }}" class="btn btn-secondary gradient">View Ad Requests</a>
+                            <button class="btn btn-secondary gradient" id="view-campaign" data-campaign-id = "{{ campaign.id }}" >View Campaign</button>
+                            <button class="btn btn-secondary gradient" id="edit-campaign" data-campaign-id = "{{ campaign.id }}" >Edit Campaign</button>
+                            <button class="btn btn-secondary gradient" id="delete-campaign-show-modal" data-campaign-id = "{{ campaign.id }}" data-campaign-name = "{{ campaign.name }}">Delete Campaign</button>
+                        </div>    
                     </div>
                 </div>
             </div>
@@ -29,6 +34,88 @@
 
 
 <!-- Modal Structure -->
+<div class="modal fade" id="editCampaignModal" tabindex="-1" role="dialog" aria-labelledby="editCampaignModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCampaignModalLabel">Edit Campaign Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <div class="form-group">
+                        <label for="adRequestId">Campaign ID</label>
+                        <input type="text" class="form-control" id="campaignId" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="campaignName">Campaign Name</label>
+                        <input type="text" class="form-control" id="campaignName">
+                    </div>
+                    <div class="form-group">
+                        <label for="goals">Goals</label>
+                        <textarea class="form-control" id="goals" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="visibility">Visibility</label>
+                        <select class="form-control" id="visibility" name="visibility">
+                            <option value="public">Public</option>
+                            <option value="private">Private</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input type="datetime-local" class="form-control" id="startDate" name="start_date">
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">End Date</label>
+                        <input type="datetime-local" class="form-control" id="endDate" name="end_date">
+                    </div>
+                    <div class="form-group">
+                        <label for="budget">Budget</label>
+                        <input type="number" class="form-control" id="budget" name="budget" step="100">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveCampaignChangesBtn">Save Changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteCampaignModal" tabindex="-1" role="dialog" aria-labelledby="deleteCampaignModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="deleteCampaignModalLabel" style="font-weight: bold;">Confirm Delete?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="editForm"></form>
+                <div class="form-group">
+                    <label for="campaignId_delete">Campaign ID</label>
+                    <input type="text" class="form-control" id="campaignId_delete" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="campaignName_delete">Campaign Name</label>
+                    <input type="text" class="form-control" id="campaignName_delete" readonly>
+                </div>
+            This action is irreversible and will delete the Campaign.
+        </div>
+        <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" style="background-color: red; border-color: red;" id="delete-campaign">Delete</button>
+        </div>
+        </form>
+    </div>
+</div>
+</div>
+
 <div class="modal fade" id="createCampaignModal" tabindex="-1" role="dialog" aria-labelledby="createCampaignModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -79,5 +166,55 @@
             </form>
         </div>
     </div>
+</div>
+
+<div class="modal fade" id="campaignDetailsModal" tabindex="-1" role="dialog" aria-labelledby="campaignDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="campaignDetailsModalLabel" style="font-weight: bold;">Campaign Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr>
+                                <th>Campaign</th>
+                                <td id="modal-campaign-name"></td>
+                            </tr>
+                            <tr>
+                                <th>Description</th>
+                                <td id="modal-campaign-description"></td>
+                            </tr>
+                            <tr>
+                                <th>Goals</th>
+                                <td id="modal-goals"></td>
+                            </tr>
+                            <tr>
+                                <th>Visibility</th>
+                                <td id="modal-visibility"></td>
+                            </tr>
+                            <tr>
+                                <th>Start Date</th>
+                                <td id="modal-campaign-start-date"></td>
+                            </tr>
+                            <tr>
+                                <th>End Date</th>
+                                <td id="modal-end-date"></td>
+                            </tr>
+                            <tr>
+                                <th>Budget</th>
+                                <td id="modal-budget"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 {% endblock %}

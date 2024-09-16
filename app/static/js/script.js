@@ -121,9 +121,83 @@ document.addEventListener("DOMContentLoaded", function() {
         $('#deleteAdModal').modal('show');
         console.log("DELETE CLICKED");
     });
+
 });
 
 document.addEventListener("DOMContentLoaded", function() {
+
+    document.getElementById('edit-campaign').addEventListener('click', function(){
+        var campaignId = this.getAttribute('data-campaign-id');
+        document.getElementById('campaignId').value = campaignId;
+        var apiUrl = '/api/campaign/' + campaignId;
+
+        fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            $('#editCampaignModal').modal('show'); 
+            document.getElementById('campaignName').value = data.campaign_name;
+            document.getElementById('budget').value = data.campaign_budget;
+            document.getElementById('startDate').value = data.campaign_start_date;
+            document.getElementById('endDate').value = data.campaign_end_date;
+            document.getElementById('goals').value = data.campaign_goals;
+            document.getElementById('visibility').value = data.campaign_visibility;
+        })
+        .catch(function(error) {
+            console.error('Error Fetching Campaign Details', error);
+        });
+
+    });
+
+    document.getElementById('delete-campaign-show-modal').addEventListener('click', function(){
+        var campaignId = this.getAttribute('data-campaign-id');
+        var campaignName = this.getAttribute('data-campaign-name');
+        document.getElementById('campaignId_delete').value = campaignId;
+        document.getElementById('campaignName_delete').value = campaignName;
+        $('#deleteCampaignModal').modal('show');
+
+    });
+
+    document.getElementById('view-campaign').addEventListener('click', function() {
+        var campaign_id = this.getAttribute('data-campaign-id');
+        var apiUrl = '/api/campaign/' + campaign_id;
+
+        fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            $('#campaignDetailsModal').modal('show'); 
+            document.getElementById('modal-campaign-name').textContent = data.campaign_name;
+            document.getElementById('modal-budget').textContent = 'Rs. ' + data.campaign_budget;
+            document.getElementById('modal-campaign-start-date').textContent = data.campaign_start_date;
+            document.getElementById('modal-end-date').textContent = data.campaign_end_date;
+            document.getElementById('modal-goals').textContent = data.campaign_goals;
+            document.getElementById('modal-visibility').textContent = data.campaign_visibility;
+            document.getElementById('modal-campaign-description').textContent = data.campaign_description;
+        })
+        .catch(function(error) {
+            console.error('Error Fetching Campaign Details', error);
+        });
+    });
+
     document.getElementById('addCampaign').addEventListener('click', function() {
         // Get the form data
         const form = document.getElementById("createCampaignForm");
@@ -189,7 +263,112 @@ document.addEventListener("DOMContentLoaded", function() {
             }, 1000); 
         }
     });
+
+    document.getElementById('delete-campaign').addEventListener('click', function() {
+        var campaignId = document.getElementById('campaignId_delete').value;
+        console.log(campaignId);
+
+        var apiUrl = '/api/campaign/delete/' + campaignId;
+
+        var requestData = {
+            campaign_id: campaignId
+        };
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            showNotification(data.message || 'Campaign Deleted Successfully', 'success');
+            setTimeout(function() {
+                $('#deleteAdModal').modal('hide');
+                location.reload(); 
+            }, 1000); 
+        })
+        .catch(function(error) {
+            console.error('Error Deleting Campaign', error);
+            showNotification('Error Deleting Campaign', 'error');
+        });
+
+        function showNotification(message, type) {
+            var notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification ' + (type || 'error');
+            notification.style.display = 'block';
+            setTimeout(function() {
+                notification.style.display = 'none';
+            }, 1000); 
+        }
+    });
+
+    document.getElementById('saveCampaignChangesBtn').addEventListener('click', function() {
+        var campaignId = document.getElementById('campaignId').value;
+        var campaignName = document.getElementById('campaignName').value;
+        var goals = document.getElementById('goals').value;
+        var visibility = document.getElementById('visibility').value;
+        var budget = document.getElementById('budget').value;
+
+        var requestData = {
+            campaign_id: campaignId,
+            campaignName: campaignName,
+            goals: goals,
+            visibility: visibility,
+            budget: budget
+        };
+
+        var apiUrl = '/api/campaign/update/' + campaignId;
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            showNotification(data.message || 'Campaign Updated Successfully', 'success');
+            setTimeout(function() {
+                $('#editCampaignModal').modal('hide');
+                location.reload(); 
+            }, 1000); 
+        })
+        .catch(function(error) {
+            console.error('Error Updating Campaign', error);
+            showNotification('Error Updating Campaign', 'error');
+        });
+
+        function showNotification(message, type) {
+            var notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification ' + (type || 'error');
+            notification.style.display = 'block';
+            setTimeout(function() {
+                notification.style.display = 'none';
+            }, 1000); 
+        }
+    
+
+
+    });
+
+
 });
+
 
 $(document).ready(function() {
     $('#campaignModal').on('show.bs.modal', function (event) {
@@ -917,8 +1096,5 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 1000); 
         }
     });
-
-    
-
 
     

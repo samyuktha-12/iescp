@@ -3,7 +3,7 @@ from flask import render_template, flash, redirect, url_for, session, request, j
 from app import app, db, api
 from app.forms import LoginForm, RegistrationForm, CampaignForm
 from app.models import User, Campaign, AdRequest, Negotiations
-from app.resources import IndexResource, LoginResource, RegisterResource, GetAllInfluencersResource, AcceptAdRequestResource,RejectAdRequestResource, GetUserProfileResource, GetInfluencerProfileResource, ViewInfluencerProfileResource, EditInfluencerProfileResource, NegotiateAdRequestResource, AddNegotiationResource, AdRequestDetailsResource, GetInfluencersResource, UpdateAdRequestResource, DeleteAdRequestResource
+from app.resources import IndexResource, LoginResource, RegisterResource, GetAllInfluencersResource, AcceptAdRequestResource,RejectAdRequestResource, GetUserProfileResource, GetInfluencerProfileResource, ViewInfluencerProfileResource, EditInfluencerProfileResource, NegotiateAdRequestResource, AddNegotiationResource, AdRequestDetailsResource, GetInfluencersResource, UpdateAdRequestResource, DeleteAdRequestResource, CampaignDetailsResource, DeleteCampaignResource, UpdateCampaignResource
 import requests
 from datetime import datetime
 from sqlalchemy import func
@@ -339,3 +339,6 @@ api.add_resource(GetInfluencersResource, '/api/influencers/<int:ad_request_id>')
 api.add_resource(UpdateAdRequestResource, '/api/ad_requests/update/<int:ad_request_id>')
 api.add_resource(GetAllInfluencersResource, '/api/influencer/getall')
 api.add_resource(DeleteAdRequestResource, '/api/ad_requests/delete/<int:ad_request_id>')
+api.add_resource(CampaignDetailsResource, '/api/campaign/<int:campaign_id>')
+api.add_resource(DeleteCampaignResource, '/api/campaign/delete/<int:campaign_id>')
+api.add_resource(UpdateCampaignResource, '/api/campaign/update/<int:campaign_id>')

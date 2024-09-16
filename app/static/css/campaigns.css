@@ -1,3 +1,8 @@
+.campaigns {
+    padding-bottom: 60px;
+    overflow-y: visible;
+}
+
 .mt-4, .my-4 {
     margin-top: 3.5rem !important;
     margin-left: -15.5rem;
@@ -24,8 +29,24 @@
     height: 100%;
 }
 
+.card-body {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Create 2 columns of equal width */
+    gap: 10px; /* Optional: Add space between buttons */
+    height: 100%; /* Ensure it stretches to full height */
+    justify-items: center; /* Center buttons within their grid cells */
+    align-items: center; /* Center buttons vertically within their grid cells */
+}
+
 .btn-secondary.gradient {
     background-image: linear-gradient(to left, #365F91, #112D4E);
+}
+
+.btn-container {
+    display: grid;
+    gap: 10px; /* Space between buttons */
+    margin-top: auto;
+    justify-content: center; /* Push the container to the bottom */
 }
 
 #addCampaign {
@@ -53,4 +74,12 @@
 
 .notification.error {
     background-color: #dc3545; /* Red background for error */
+}
+
+.modal-body {
+    padding: 20px; /* Adequate padding around content */
+}
+
+.modal-content {
+    width: 150%;
 }
