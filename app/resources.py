@@ -324,6 +324,7 @@ class UpdateCampaignResource(Resource):
         except Exception as e:
             db.session.rollback()
             return jsonify({'success': False, 'error': str(e)}), 500
+        
     
 
 

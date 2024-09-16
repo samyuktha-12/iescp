@@ -1,0 +1,84 @@
+.find{
+    overflow-y: visible;
+    padding-bottom: 60px;
+}
+.mt-4, .my-4 {
+    margin-top: 3.5rem !important;
+    margin-left: -15.5rem !important;
+    margin-right: -31rem !important;
+}
+
+.mb-4, .my-4 {
+    margin-right: -31rem;
+}
+
+.row {
+    box-shadow: none;
+    width: 150%;
+    justify-content: center
+}
+
+.col-md-4 {
+    max-width: 25%;
+    padding: 10px;
+}
+
+.container .mt-5{
+    margin-right: -15.5rem !important;
+}
+
+.table-container {
+    margin-top: 2rem;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table th, .table td {
+    border: 1px solid #dee2e6;
+    padding: 0.75rem;
+    text-align: center;
+}
+
+.table thead th {
+    background-color: #95bced;
+    color: #242526;
+}
+
+.table tbody tr:nth-child(odd) {
+    background-color: #f3f3f4;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: rgb(255, 255, 255);
+}
+
+.details-row {
+    background-color: #f1f1f1;
+    font-size: 0.875rem;
+}
+
+.details-row td {
+    padding: 0.5rem;
+}
+
+.details-row th {
+    background-color: #e9ecef;
+}
+
+.details-row .details-content {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.details-row .details-content td, 
+.details-row .details-content th {
+    border: 1px solid #ced4da;
+    padding: 0.5rem;
+    text-align: center;
+}

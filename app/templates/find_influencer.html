@@ -1,0 +1,130 @@
+{% extends "navbar_after_login.html" %}
+
+{% block title %}Find Influencer{% endblock %}
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='/css/find.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="find">
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between mb-4">
+            <h1>I N F L U E N C E R S</h1>
+        </div>
+    <div>
+        <div class="filter-container">
+            <form id="filterForm" class="d-flex mb-4">
+                <div class="form-group">
+                    <label for="nicheFilter">Filter by Niche:</label>
+                    <select id="nicheFilter" class="form-control">
+                        <option value="">All Niches</option>
+                        {% set unique_niches = [] %}
+                        {% for profile in profiles %}
+                            {% for platform in profile.platforms %}
+                                {% for niche in platform.niches %}
+                                    {% if niche.niche not in unique_niches %}
+                                        {% set _ = unique_niches.append(niche.niche) %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        {% endfor %}
+                        {% for niche in unique_niches %}
+                        {% if niche == selected_niche %}
+                        <option value="{{ niche }}" selected>{{ niche }}</option>
+                        {% else %}
+                        <option value="{{ niche }}">{{ niche }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group mx-3">
+                    <label for="platformFilter">Filter by Platform:</label>
+                    <select id="platformFilter" class="form-control">
+                        <option value="">All Platforms</option>
+                        {% set unique_platforms = [] %}
+                        {% for profile in profiles %}
+                            {% for platform in profile.platforms %}
+                                {% if platform.platform not in unique_platforms %}
+                                    {% set _ = unique_platforms.append(platform.platform) %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                        {% for platform in unique_platforms %}
+                        {% if platform == selected_platform %}
+                        <option value="{{ platform }}" selected>{{ platform }}</option>
+                        {% else %}
+                        <option value="{{ platform }}">{{ platform }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
+                    <button type="button" class="btn btn-primary" id="applyFilters" style="height: 40px;margin-top: 30px;">Apply Filter</button>
+            </form>
+        </div>
+        <div class="container mt-5">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th style="text-align: center;">Influencer ID</th>
+                        <th style="text-align: center;">Username</th>
+                        <th style="text-align: center;">Total Followers</th>
+                        <th style="text-align: center;">Reach</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for profile in profiles %}
+                    <tr data-niche="{{ profile.platforms|map(attribute='niches')|join(', ') }}" data-platform="{{ profile.platforms|map(attribute='platform')|join(', ') }}">
+                        <td style="text-align: center;">{{ profile.influencer_id }}</td>
+                        <td style="text-align: center;">{{ profile.username }}</td>
+                        <td style="text-align: center;">{{ profile.total_followers }}</td>
+                        <td>
+                            <!-- Nested table for platforms -->
+                            <table class="table table-bordered nested-table">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center;">Platform</th>
+                                        <th style="text-align: center;">Total Followers</th>
+                                        <th style="text-align: center; width: 170px;">Niche</th>
+                                        <th style="text-align: center;">Followers</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for platform in profile.platforms %}
+                                    <tr>
+                                        <td style="text-align: center;">{{ platform.platform }}</td>
+                                        <td style="text-align: center;">{{ platform.total_followers }}</td>
+                                        <td colspan="2">
+                                            <!-- Nested table for niches -->
+                                            <table class="table table-bordered nested-table">
+                                                <tbody>
+                                                    {% for niche in platform.niches %}
+                                                    <tr>
+                                                        <td style="width: 157px;">{{ niche.niche }}</td>
+                                                        <td>{{ niche.followers }}</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        document.getElementById('applyFilters').addEventListener('click', function() {
+            const nicheFilter = encodeURIComponent(document.getElementById('nicheFilter').value);
+            const platformFilter = encodeURIComponent(document.getElementById('platformFilter').value);
+            const url = new URL(window.location.href);
+            url.searchParams.set('niche', nicheFilter);
+            url.searchParams.set('platform', platformFilter);
+            window.location.href = url.toString();
+        });
+    </script>
+{% endblock %}

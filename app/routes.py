@@ -2,7 +2,7 @@
 from flask import render_template, flash, redirect, url_for, session, request, jsonify
 from app import app, db, api
 from app.forms import LoginForm, RegistrationForm, CampaignForm
-from app.models import User, Campaign, AdRequest, Negotiations
+from app.models import User, Campaign, AdRequest, Negotiations, InfluencerProfile
 from app.resources import IndexResource, LoginResource, RegisterResource, GetAllInfluencersResource, AcceptAdRequestResource,RejectAdRequestResource, GetUserProfileResource, GetInfluencerProfileResource, ViewInfluencerProfileResource, EditInfluencerProfileResource, NegotiateAdRequestResource, AddNegotiationResource, AdRequestDetailsResource, GetInfluencersResource, UpdateAdRequestResource, DeleteAdRequestResource, CampaignDetailsResource, DeleteCampaignResource, UpdateCampaignResource
 import requests
 from datetime import datetime
@@ -200,6 +200,118 @@ def campaigns():
     sponsor_id = request.args.get('sponsor_id')
     campaigns = Campaign.query.filter_by(sponsor_id=sponsor_id).all()
     return render_template('campaigns.html', active_page='campaigns', campaigns=campaigns, sponsor_id=sponsor_id)
+
+@app.route('/find_influencer')
+def find_influencer():
+    # Get filter values from query parameters
+    niche_filter = request.args.get('niche', '').lower()
+    platform_filter = request.args.get('platform', '').lower()
+    selected_niche = request.args.get('niche', '')
+    selected_platform = request.args.get('platform', '')
+
+    # Perform a join to get user information along with influencer profiles
+    profiles_query = db.session.query(
+        InfluencerProfile,
+        User.username.label('user_name')
+    ).join(User, InfluencerProfile.influencer_id == User.id)
+
+    profiles = profiles_query.all()
+
+    # Aggregate followers by influencer_id, platform, and niche
+    aggregated_data = {}
+    for profile, user_name in profiles:
+        influencer_id = profile.influencer_id
+        if influencer_id not in aggregated_data:
+            aggregated_data[influencer_id] = {
+                'username': user_name,
+                'total_followers': 0,
+                'platforms': {}
+            }
+        
+        # Initialize platform if not already present
+        if profile.platform not in aggregated_data[influencer_id]['platforms']:
+            aggregated_data[influencer_id]['platforms'][profile.platform] = {
+                'total_followers': 0,
+                'niches': {}
+            }
+        
+        # Update total followers for the platform and niche
+        aggregated_data[influencer_id]['total_followers'] += profile.followers
+        platform_data = aggregated_data[influencer_id]['platforms'][profile.platform]
+        platform_data['total_followers'] += profile.followers
+        
+        if profile.niche not in platform_data['niches']:
+            platform_data['niches'][profile.niche] = 0
+        platform_data['niches'][profile.niche] += profile.followers
+
+    # Prepare data to be passed to the template
+    profiles_data = []
+    for influencer_id, data in aggregated_data.items():
+        platforms_data = []
+        for platform, platform_data in data['platforms'].items():
+            niches_data = [{'niche': niche, 'followers': followers} for niche, followers in platform_data['niches'].items()]
+            platforms_data.append({
+                'platform': platform,
+                'total_followers': platform_data['total_followers'],
+                'niches': niches_data
+            })
+        
+        profiles_data.append({
+            'influencer_id': influencer_id,
+            'username': data['username'],
+            'total_followers': data['total_followers'],
+            'platforms': platforms_data
+        })
+
+    if niche_filter:
+        profiles_data = [
+            {
+                **profile,  # Copy all original profile data
+                'platforms': [
+                    {
+                        **platform,  # Copy all original platform data
+                        'niches': [
+                            n  # Keep only the niche matching niche_filter
+                            for n in platform['niches']
+                            if n['niche'].lower() == niche_filter.lower()
+                        ]
+                    }
+                    for platform in profile['platforms']
+                    if any(n['niche'].lower() == niche_filter.lower() for n in platform['niches'])
+                ]
+            }
+            for profile in profiles_data
+            if any(
+                niche['niche'].lower() == niche_filter.lower()
+                for platform in profile['platforms']
+                for niche in platform['niches']
+            )
+        ]
+
+    if platform_filter:
+        profiles_data = [
+            {
+                **profile,  # Copy all original profile data
+                'platforms': [
+                    {
+                        **platform,  # Copy all original platform data
+                        'niches': platform['niches']  # Keep all niches as is for the filtered platform
+                    }
+                    for platform in profile['platforms']
+                    if platform['platform'].lower() == platform_filter.lower()
+                ]
+            }
+            for profile in profiles_data
+            if any(
+                platform['platform'].lower() == platform_filter.lower()
+                for platform in profile['platforms']
+            )
+        ]
+    return render_template('find_influencer.html', active_page='find', profiles=profiles_data, selected_niche=selected_niche, selected_platform=selected_platform)
+
+@app.route('/find_sponsor')
+def find_sponosr():
+    return render_template('find_sponsor.html', active_page='find')
 
 @app.route('/campaign')
 def campaign():
