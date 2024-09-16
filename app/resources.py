@@ -2,7 +2,7 @@ from flask import jsonify, request, url_for, session
 from flask_restful import Resource
 from app import db
 from app.models import User, Campaign, AdRequest, InfluencerProfile, Negotiations, FlaggedUsers
-from app.forms import LoginForm, RegistrationForm, CampaignForm
+from app.forms import LoginForm, RegistrationForm
 
 class IndexResource(Resource):
     def get(self):
