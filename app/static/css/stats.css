@@ -27,14 +27,14 @@
 .chart-container {
     display: flex;
     justify-content: space-between;
-    gap: 100px; /* Adjust gap as needed */
+    gap: 100px; 
     margin-right: -31rem
 }
 .chart-container .chart {
-    flex: 1; /* Each chart takes equal width */
-    min-width: 0; /* Ensures the chart containers don't shrink too small */
+    flex: 1; 
+    min-width: 0; 
 }
 canvas {
-    width: 90% !important; /* Ensure the canvas takes full width of its container */
-    height: 450px !important; /* Adjust height as needed */
+    width: 90% !important; 
+    height: 450px !important; 
 }

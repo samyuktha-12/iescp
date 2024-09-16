@@ -1,4 +1,3 @@
-# app/forms.py
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, FloatField, SelectField, DateTimeField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length
@@ -18,12 +17,3 @@ class RegistrationForm(FlaskForm):
     role = SelectField('Role', choices=[('sponsor', 'Sponsor'), ('influencer', 'Influencer')], validators=[DataRequired()])
     submit = SubmitField('Sign Up')
 
-class CampaignForm(FlaskForm):
-    name = StringField('Name', validators=[DataRequired()])
-    description = TextAreaField('Description', validators=[DataRequired()])
-    start_date = DateTimeField('Start Date', format='%Y-%m-%d %H:%M:%S')
-    end_date = DateTimeField('End Date', format='%Y-%m-%d %H:%M:%S')
-    budget = FloatField('Budget', validators=[DataRequired()])
-    visibility = SelectField('Visibility', choices=[('public', 'Public'), ('private', 'Private')], validators=[DataRequired()])
-    goals = TextAreaField('Goals', validators=[DataRequired()])
-    submit = SubmitField('Create Campaign')

@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Fetch influencers and populate dropdown
     fetch('/api/influencer/getall')
         .then(response => response.json())
         .then(data => {
@@ -28,10 +27,9 @@ document.addEventListener("DOMContentLoaded", function() {
             requirements: formDataObject.requirements,
             payment_amount: formDataObject.payment_amount,
             status: "Pending",
-            campaign_id: parseInt(campaignId, 10), // Ensure campaign_id is a number
-            influencer_id: parseInt(formDataObject.influencer_id, 10) // Ensure influencer_id is a number
+            campaign_id: parseInt(campaignId, 10), 
+            influencer_id: parseInt(formDataObject.influencer_id, 10) 
         };
-        console.log(adJson);
 
         fetch('/api/campaign/create', {
             method: 'POST',
@@ -41,12 +39,11 @@ document.addEventListener("DOMContentLoaded", function() {
             body: JSON.stringify(adJson)
         })
         .then(response => {
-            // Check if the response is OK (status code 200-299)
             if (response.ok) {
-                return response.json(); // Parse JSON if response is OK
+                return response.json(); 
             } else {
                 return response.json().then(errorData => {
-                    throw new Error(errorData.error || 'An error occurred'); // Throw error if response is not OK
+                    throw new Error(errorData.error || 'An error occurred'); 
                 });
             }
         })
@@ -85,7 +82,6 @@ document.addEventListener("DOMContentLoaded", function() {
             var payment = this.getAttribute('data-payment-amount');
             var campaignName = this.getAttribute('data-campaign-name');
         
-            console.log("EDIT CLICKED");
 
             document.getElementById('adRequestId').value = adRequestId;
             document.getElementById('campaignName').value = campaignName;
@@ -119,7 +115,6 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('adRequestId').value = adRequestId;
         document.getElementById('campaignName').value = campaignName;
         $('#deleteAdModal').modal('show');
-        console.log("DELETE CLICKED");
     });
 
 });
@@ -199,7 +194,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     document.getElementById('addCampaign').addEventListener('click', function() {
-        // Get the form data
         const form = document.getElementById("createCampaignForm");
         const formData = new FormData(form);
         const formDataObject = {};
@@ -207,25 +201,21 @@ document.addEventListener("DOMContentLoaded", function() {
             formDataObject[key] = value;
         });
 
-        // Get sponsor ID from the button's data attribute
         const sponsorId = this.getAttribute("data-sponsor-id");
 
-        // Construct the campaign JSON object
         const campaignJson = {
             name: formDataObject.name,
             description: formDataObject.description,
-            start_date: formDataObject.start_date,  // Ensure format is correct
-            end_date: formDataObject.end_date,      // Ensure format is correct
-            budget: parseFloat(formDataObject.budget), // Ensure budget is a number
+            start_date: formDataObject.start_date,  
+            end_date: formDataObject.end_date,      
+            budget: parseFloat(formDataObject.budget), 
             visibility: formDataObject.visibility,
             goals: formDataObject.goals,
-            sponsor_id: parseInt(sponsorId, 10) // Ensure sponsor_id is a number
+            sponsor_id: parseInt(sponsorId, 10) 
         };
 
-        // API URL
         const apiUrl = '/api/campaigns/create';
 
-        // Send data to the server
         fetch(apiUrl, {
             method: 'POST',
             headers: {
@@ -244,8 +234,8 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(function(data) {
             showNotification(data.message || 'Campaign created successfully!', 'success');
             setTimeout(function() {
-                $('#createCampaignModal').modal('hide'); // Hide modal
-                location.reload(); // Reload the page to reflect changes
+                $('#createCampaignModal').modal('hide'); 
+                location.reload(); 
             }, 100); 
         })
         .catch(function(error) {
@@ -266,7 +256,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.getElementById('delete-campaign').addEventListener('click', function() {
         var campaignId = document.getElementById('campaignId_delete').value;
-        console.log(campaignId);
 
         var apiUrl = '/api/campaign/delete/' + campaignId;
 
@@ -700,8 +689,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     followers: followers
                 };
 
-                console.log(requestData);
-
                 fetch('/api/editinfluencerprofile', {
                     method: 'POST',
                     headers: {
@@ -749,7 +736,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (event.target.classList.contains('btn-insert-profile')) {
-                console.log("Button Clicked");
                 var rowIndex = event.target.getAttribute('data-index');
                 var platform = influencerData.platforms[rowIndex];
                 var niche = influencerData.niches[rowIndex];
@@ -853,9 +839,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         negotiateButtons.forEach(function(button) {
             button.addEventListener('click', function(event) {
-                console.log("Negotiate Button Clicked");
                 var requestId = this.getAttribute('data-ad-request-id');
-                console.log(requestId);
                 var negotiateSection = document.getElementById('negotiate-section-' + requestId);
                 negotiateSection.style.display = 'block';
             });
@@ -963,7 +947,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const messages = event.target.dataset.messages;
                 const requirements = event.target.dataset.requirements;
                 const paymentAmount = event.target.dataset.paymentAmount;
-                console.log("EDIT CLICKED");
     
                 fetch(`/api/ad-request/details/${adRequestId}`)
                 .then(response => response.json())
@@ -1053,7 +1036,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('delete-ad').addEventListener('click', function() {
         var adRequestId = document.getElementById('adRequestId').value;
-        console.log(adRequestId);
 
         var apiUrl = '/api/ad_requests/delete/' + adRequestId;
 

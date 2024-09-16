@@ -8,8 +8,8 @@
 .profile-section {
     display: flex;
     align-items: center;
-    justify-content: center; /* Center the entire section */
-    gap: 20px; /* Adjust spacing between the avatar and welcome text */
+    justify-content: center; 
+    gap: 20px; 
     background-color: #f9f9f9;
     border-radius: 8px;
     padding-top: 20px;
@@ -19,27 +19,27 @@
 .avatar-container {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center align the avatar and role tag */
+    align-items: center; 
 }
 
 .avatar {
-    width: 100px; /* Adjust size of the avatar circle */
+    width: 100px; 
     height: 100px;
-    border-radius: 50%; /* Creates a round shape */
-    overflow: hidden; /* Ensures image stays within the circle */
+    border-radius: 50%; 
+    overflow: hidden; 
 }
 
 .avatar img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Maintain aspect ratio and cover the circle */
+    object-fit: cover; 
 }
 
 .role-tag {
     font-size: 14px;
-    color: #666; /* Adjust color as needed */
-    margin-top: 5px; /* Adjust spacing between avatar and role tag */
-    text-align: center; /* Center align the role tag */
+    color: #666; 
+    margin-top: 5px; 
+    text-align: center; 
 }
 
 .welcome-text h2 {
@@ -94,7 +94,7 @@
 
 .campaign-actions .btn,
 .request-actions .btn {
-    margin-left: auto; /* Moves the buttons to the right */
+    margin-left: auto; 
 }
 
 .btn {
@@ -155,19 +155,19 @@
 }
 
 .table-borderless {
-    border-collapse: collapse; /* Ensure cells are close to each other */
+    border-collapse: collapse;
     width: 100%;
 }
 
 .table-borderless th,
 .table-borderless td {
-    border: none; /* Remove borders from table cells */
-    padding: 8px 16px; /* Adjust padding as needed */
+    border: none; 
+    padding: 8px 16px; 
 }
 
 .table-borderless th {
     text-align: left;
-    width: 30%; /* Set width for table headers */
+    width: 30%; 
 }
 
 .table-borderless td {
@@ -175,7 +175,7 @@
 }
 
 .modal-body {
-    padding: 20px; /* Adequate padding around content */
+    padding: 20px;
 }
 
 .earnings-box {
@@ -193,14 +193,14 @@
     top: 60px;
     right: 2px;
     padding: 10px 20px;
-    background-color: #28a745; /* Green background for success */
+    background-color: #28a745; 
     color: white;
     border-radius: 5px;
     z-index: 1100;
 }
 
 .notification.error {
-    background-color: #dc3545; /* Red background for error */
+    background-color: #dc3545; 
 }
 
 .btn-edit{
