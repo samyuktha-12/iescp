@@ -137,7 +137,7 @@
                         </button>
                         <button class="btn btn-edit" 
                                         data-ad-request-id="{{ ad_request.id }}" 
-                                        data-campaign-name="test" 
+                                        data-campaign-name="{{ campaign.name }}" 
                                         data-influencer-id="{{ ad_request.influencer_id }}" 
                                         data-messages="{{ ad_request.messages }}" 
                                         data-requirements="{{ ad_request.requirements }}" 
@@ -336,5 +336,3 @@
   
 </div>
 {% endblock %}
-
-{% set show_campaigns_link = (role == 'sponsor') %}

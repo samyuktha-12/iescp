@@ -25,13 +25,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-secondary {
-    background-color: #DBE2EF; /* Light Blue secondary buttons */
-    border-color: #DBE2EF;
+    background-color: #112D4E; /* Light Blue secondary buttons */
+    border-color: #112D4E;
 }
 
 .btn-secondary:hover {
-    background-color: #B8C7DE; /* Darker Light Blue on hover */
-    border-color: #B8C7DE;
+    background-color: #365F91; /* Darker Light Blue on hover */
+    border-color: #365F91;
 }
 
 .alert-warning {

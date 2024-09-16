@@ -30,12 +30,13 @@
                         <a class="nav-link" href="{{ url_for('login') }}">Profile</a>
                     {% endif %}
                 </li>
-                
+
                 {% if session['role'] =='sponsor' %}
                 <li class="nav-item{% if active_page == 'campaigns' %}-active{% endif %}">
-                    <a class="nav-link" href="#">Campaigns</a>
+                    <a class="nav-link" href="{{ url_for('campaigns', sponsor_id=session['user_id']) }}">Campaigns</a>
                 </li>
                 {% endif %}
+
                 <li class="nav-item{% if active_page == 'find' %}-active{% endif %}">
                     <a class="nav-link" href=#>Find</a>
                 </li>

@@ -1,9 +1,9 @@
 # app/routes.py
-from flask import render_template, flash, redirect, url_for, session
+from flask import render_template, flash, redirect, url_for, session, request, jsonify
 from app import app, db, api
 from app.forms import LoginForm, RegistrationForm, CampaignForm
 from app.models import User, Campaign, AdRequest, Negotiations
-from app.resources import IndexResource, LoginResource, RegisterResource, CreateCampaignResource, AcceptAdRequestResource,RejectAdRequestResource, GetUserProfileResource, GetInfluencerProfileResource, ViewInfluencerProfileResource, EditInfluencerProfileResource, NegotiateAdRequestResource, AddNegotiationResource, AdRequestDetailsResource, GetInfluencersResource, UpdateAdRequestResource
+from app.resources import IndexResource, LoginResource, RegisterResource, GetAllInfluencersResource, AcceptAdRequestResource,RejectAdRequestResource, GetUserProfileResource, GetInfluencerProfileResource, ViewInfluencerProfileResource, EditInfluencerProfileResource, NegotiateAdRequestResource, AddNegotiationResource, AdRequestDetailsResource, GetInfluencersResource, UpdateAdRequestResource, DeleteAdRequestResource
 import requests
 from datetime import datetime
 from sqlalchemy import func
@@ -195,32 +195,137 @@ def sponsor_dashboard():
                            active_page='profile')
 
 
-@app.route('/campaign/create', methods=['GET', 'POST'])
+@app.route('/campaigns')
+def campaigns():
+    sponsor_id = request.args.get('sponsor_id')
+    campaigns = Campaign.query.filter_by(sponsor_id=sponsor_id).all()
+    return render_template('campaigns.html', active_page='campaigns', campaigns=campaigns, sponsor_id=sponsor_id)
+
+@app.route('/campaign')
+def campaign():
+    campaign_id = request.args.get('campaign_id')
+    campaign = Campaign.query.get(campaign_id)
+    ad_requests = AdRequest.query.filter_by(campaign_id=campaign_id).all()
+    ad_requests_with_influencer = []
+    for ad_request in ad_requests:
+        influencer = User.query.get(ad_request.influencer_id)
+        influencer_name = influencer.username if influencer else "Unknown"
+        ad_requests_with_influencer.append({
+            'campaign_id': campaign_id,
+            'ad_request_id': ad_request.id,
+            'ad_request_payment': ad_request.payment_amount,
+            'influencer_name': influencer_name,
+            'requirements': ad_request.requirements,
+            'status': ad_request.status,
+            'messages': ad_request.messages
+        })
+    
+    return render_template('campaign.html', active_page='campaigns', campaign=campaign, campaign_id=campaign_id, ad_requests=ad_requests_with_influencer)
+
+@app.route('/api/campaigns/create', methods=['POST'])
 def create_campaign():
-    form = CampaignForm()
-    if form.validate_on_submit():
-        campaign = Campaign(
-            name=form.name.data,
-            description=form.description.data,
-            start_date=form.start_date.data,
-            end_date=form.end_date.data,
-            budget=form.budget.data,
-            visibility=form.visibility.data,
-            goals=form.goals.data,
-            sponsor=current_user
-        )
+    data = request.get_json()
+
+    name = data.get('name')
+    description = data.get('description')
+    start_date_str = data.get('start_date')
+    end_date_str = data.get('end_date')
+    budget = data.get('budget')
+    visibility = data.get('visibility')
+    goals = data.get('goals')
+    sponsor_id = data.get('sponsor_id')
+
+    if not all([name, description, start_date_str, end_date_str, budget, visibility, goals, sponsor_id]):
+        return jsonify({"error": "Missing required fields"}), 400
+
+    try:
+        # Convert date strings to datetime objects
+        start_date = datetime.fromisoformat(start_date_str.replace('Z', '+00:00'))
+        end_date = datetime.fromisoformat(end_date_str.replace('Z', '+00:00'))
+    except ValueError:
+        return jsonify({"error": "Invalid date format"}), 400
+
+    # Check if a similar campaign already exists
+    existing_campaign = db.session.query(Campaign).filter_by(
+        name=name,
+        description=description,
+        start_date=start_date,
+        end_date=end_date,
+        budget=budget,
+        visibility=visibility,
+        goals=goals,
+        sponsor_id=sponsor_id
+    ).first()
+
+    if existing_campaign:
+        return jsonify({"error": "A similar campaign already exists"}), 400
+
+    # Create the new campaign
+    campaign = Campaign(
+        name=name,
+        description=description,
+        start_date=start_date,
+        end_date=end_date,
+        budget=budget,
+        visibility=visibility,
+        goals=goals,
+        sponsor_id=sponsor_id
+    )
+
+    try:
         db.session.add(campaign)
         db.session.commit()
-        flash('Campaign created successfully!')
-        return redirect(url_for('sponsor_dashboard'))
-    return render_template('create_campaign.html', title='Create Campaign', form=form)
+        return jsonify({"message": "Campaign created successfully!"}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
+    
+@app.route('/api/campaign/create', methods=['POST'])
+def create_ad_request():
+    data = request.get_json()
 
+    campaign_id=data.get('campaign_id')
+    influencer_id = data.get('influencer_id')
+    messages = data.get('messages')
+    requirements = data.get('requirements')
+    payment_amount = data.get('payment_amount')
+    status = data.get('status')
+
+
+    if not all([campaign_id, influencer_id, messages, requirements, payment_amount, status]):
+        return jsonify({"error": "Missing required fields"}), 400
+
+    # Check if a similar campaign already exists
+    existing_ad_request = db.session.query(AdRequest).filter_by(
+        campaign_id=campaign_id,
+        influencer_id=influencer_id,
+    ).first()
+
+    if existing_ad_request:
+        return jsonify({"error": "A similar campaign already exists"}), 400
+
+    # Create the new campaign
+    ad_request = AdRequest(
+        campaign_id=campaign_id,
+        influencer_id=influencer_id,
+        messages=messages,
+        requirements=requirements,
+        payment_amount=payment_amount,
+        status=status
+    )
+
+    try:
+        db.session.add(ad_request)
+        db.session.commit()
+        return jsonify({"message": "Ad Request created successfully!"}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
 
 # Add API resource routes
 api.add_resource(IndexResource, '/api/')
 api.add_resource(LoginResource, '/api/login')
 api.add_resource(RegisterResource, '/api/register')
-api.add_resource(CreateCampaignResource, '/api/campaign/create')
 api.add_resource(AcceptAdRequestResource, '/api/campaign/accept')
 api.add_resource(RejectAdRequestResource, '/api/campaign/reject')
 api.add_resource(GetUserProfileResource, '/api/getuser')
@@ -232,3 +337,5 @@ api.add_resource(AddNegotiationResource, '/api/campaign/addnegotiation')
 api.add_resource(AdRequestDetailsResource, '/api/ad-request/details/<int:ad_request_id>')
 api.add_resource(GetInfluencersResource, '/api/influencers/<int:ad_request_id>')
 api.add_resource(UpdateAdRequestResource, '/api/ad_requests/update/<int:ad_request_id>')
+api.add_resource(GetAllInfluencersResource, '/api/influencer/getall')
+api.add_resource(DeleteAdRequestResource, '/api/ad_requests/delete/<int:ad_request_id>')

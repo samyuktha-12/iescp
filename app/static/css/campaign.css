@@ -1,0 +1,87 @@
+.mt-4, .my-4 {
+    margin-top: 3.5rem !important;
+    margin-left: -15.5rem;
+    margin-right: -31rem !important;
+}
+
+.mb-4, .my-4 {
+    margin-right: -31rem;
+}
+
+.row {
+    box-shadow: none;
+    width: 150%;
+    justify-content: center
+}
+
+.col-md-4 {
+    max-width: 25%;
+    padding: 10px;
+}
+
+.card {
+    text-align: center;
+    height: 100%;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Ensure it stretches to full height */
+    justify-content: space-between; /* Space out content and push buttons to the end */
+}
+
+.btn {
+    margin-top: auto; /* Push the button to the bottom of the card */
+}
+
+.status.accepted {
+    color: green;
+}
+  
+.status.pending {
+    color: orange;
+}
+  
+.status.rejected {
+    color: red;
+}
+  
+.status.negotiated {
+    color: blue;
+}
+
+.status.completed {
+    color:blueviolet;
+}
+
+.notification {
+    display: none;
+    position: fixed;
+    top: 60px;
+    right: 18px;
+    padding: 10px 20px;
+    background-color: #28a745; /* Green background for success */
+    color: white;
+    border-radius: 5px;
+    z-index: 1100;
+}
+
+.notification.error {
+    background-color: #dc3545; /* Red background for error */
+}
+
+.btn-container {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+    margin-top: auto;
+    justify-content: center; /* Push the container to the bottom */
+}
+
+.modal-body {
+    padding: 20px; /* Adequate padding around content */
+}
+
+.modal-content {
+    width: 150%;
+}

@@ -48,23 +48,39 @@ class RegisterResource(Resource):
 
 class CreateCampaignResource(Resource):
     def post(self):
-        form = CampaignForm(request.form)
-        if form.validate():
-            campaign = Campaign(
-                name=form.name.data,
-                description=form.description.data,
-                start_date=form.start_date.data,
-                end_date=form.end_date.data,
-                budget=form.budget.data,
-                visibility=form.visibility.data,
-                goals=form.goals.data,
-                sponsor=form.sponsor.data  
-            )
+        data = request.get_json() 
+
+        name = data.get('name')
+        description = data.get('description')
+        start_date = data.get('start_date')
+        end_date = data.get('end_date')
+        budget = data.get('budget')
+        visibility = data.get('visibility')
+        goals = data.get('goals')
+        sponsor_id = data.get('sponsor_id') 
+
+        if not all([name, description, start_date, end_date, budget, visibility, goals, sponsor_id]):
+            return jsonify({"errors": "Missing required fields"}), 400
+
+        campaign = Campaign(
+            name=name,
+            description=description,
+            start_date=start_date,
+            end_date=end_date,
+            budget=budget,
+            visibility=visibility,
+            goals=goals,
+            sponsor_id=sponsor_id
+        )
+
+        try:
             db.session.add(campaign)
             db.session.commit()
-            return {"message": "Campaign created successfully!"}, 201
-        return {"errors": form.errors}, 400
-    
+            return jsonify({"message": "Campaign created successfully!"}), 201
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"errors": str(e)}), 400
+
 class AcceptAdRequestResource(Resource):
     def post(self):
         ad_request_id = request.json.get('ad_request_id')  
@@ -218,6 +234,13 @@ class GetInfluencersResource(Resource):
             'assigned_influencer': ad_request.influencer_id
         })
     
+class GetAllInfluencersResource(Resource):
+    def get(self):
+        influencers = User.query.filter_by(role='influencer').all()
+        return jsonify({
+            'influencers': [{'id': influencer.id, 'username': influencer.username} for influencer in influencers]
+        })
+
 class UpdateAdRequestResource(Resource):
     def post(self, ad_request_id):
         ad_request = AdRequest.query.get_or_404(ad_request_id)
@@ -229,6 +252,17 @@ class UpdateAdRequestResource(Resource):
         ad_request.payment_amount = data.get('paymentAmount', ad_request.payment_amount)
         
         try:
+            db.session.commit()
+            return jsonify({'success': True})
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'success': False, 'error': str(e)}), 400
+
+class DeleteAdRequestResource(Resource):
+    def post(self, ad_request_id):
+        ad_request = AdRequest.query.get_or_404(ad_request_id)
+        try:
+            db.session.delete(ad_request)
             db.session.commit()
             return jsonify({'success': True})
         except Exception as e:

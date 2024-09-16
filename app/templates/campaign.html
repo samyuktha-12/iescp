@@ -1,0 +1,192 @@
+{% extends "navbar_after_login.html" %}
+
+{% block title %}Campaigns{% endblock %}
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='/css/campaign.css') }}">
+{% endblock %}
+
+{% block content %}
+<div id="notification" class="notification"></div>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between mb-4">
+        <h1>CAMPAIGN - {{ campaign.name }}</h1>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#createAdModal">Create New Ad Request</a>
+    </div>
+    <div class="row">
+        {% for item in ad_requests %}
+            <div class="col-md-4">
+                <div class="card campaign-card">
+                    <div class="card-body">
+                        <h3>AD REQUEST - {{ item.ad_request_id }}</h3>
+                        <div class="table-responsive">
+                            <table class="table table-borderless">
+                              <tbody>
+                                <tr>
+                                  <th>Influencer</th>
+                                  <td id="ad-req-sponsor-name">{{ item.influencer_name }}</td>
+                                </tr>
+                                <tr>
+                                  <th>Requirements</th>
+                                  <td id="ad-req-requirements">{{ item.requirements }}</td>
+                                </tr>
+                                <tr>
+                                  <th>Payment</th>
+                                  <td id="ad-req-payment">Rs. {{ item.ad_request_payment }}</td>
+                                </tr>
+                                <tr>
+                                  <th>Status</th>
+                                    <td id="ad-req-status" 
+                                        class="status 
+                                        {% if item.status == 'Accepted' %} accepted 
+                                        {% elif item.status == 'Pending' %} pending 
+                                        {% elif item.status == 'Rejected' %} rejected 
+                                        {% elif item.status == 'Negotiated' %} negotiated 
+                                        {% elif item.status == 'Completed' %} completed 
+                                        {% endif %}">
+                                        {{ item.status }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                  <th>Messages</th>
+                                  <td id="ad-req-messages">{{ item.messages }}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                          <div class="btn-container">
+                            <button class="btn btn-secondary gradient" id="edit-ad-request" 
+                                        data-ad-request-id="{{ item.ad_request_id }}" 
+                                        data-campaign-name="{{ campaign.name }}" 
+                                        data-influencer-id="{{ item.influencer_id }}" 
+                                        data-messages="{{ item.messages }}" 
+                                        data-requirements="{{ item.requirements }}" 
+                                        data-payment-amount="{{ item.ad_request_payment }}">Edit
+                        </button>
+                        <button class="btn btn-secondary gradient" id="delete-ad-request" 
+                            data-ad-request-id="{{ item.ad_request_id }}"
+                            data-campaign-name="{{ campaign.name }}" >Delete
+                        </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal Structure -->
+<div class="modal fade" id="deleteAdModal" tabindex="-1" role="dialog" aria-labelledby="createAdModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createAdModalLabel" style="font-weight: bold;">Confirm Delete?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm"></form>
+                    <div class="form-group">
+                        <label for="adRequestId">Ad Request ID</label>
+                        <input type="text" class="form-control" id="adRequestId" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="campaignName">Campaign Name</label>
+                        <input type="text" class="form-control" id="campaignName" readonly>
+                    </div>
+                <form>
+                This action is irreversible and will delete the Ad Request.
+            </div>
+            <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" style="background-color: red; border-color: red;" id="delete-ad">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editAdRequestModal" tabindex="-1" role="dialog" aria-labelledby="editAdRequestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editAdRequestModalLabel">Edit Campaign Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <div class="form-group">
+                        <label for="adRequestId">Ad Request ID</label>
+                        <input type="text" class="form-control" id="adRequestId" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="campaignName">Campaign Name</label>
+                        <input type="text" class="form-control" id="campaignName" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="influencer">Influencer</label>
+                        <select class="form-control" id="influencer">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="messages">Messages</label>
+                        <textarea class="form-control" id="messages" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="requirements">Requirements</label>
+                        <input type="text" class="form-control" id="requirements">
+                    </div>
+                    <div class="form-group">
+                        <label for="payment">Payment</label>
+                        <input type="text" class="form-control" id="payment">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveChangesBtn">Save Changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="createAdModal" tabindex="-1" role="dialog" aria-labelledby="createAdModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="createAdModalLabel" style="font-weight: bold;">Create New Ad Request - {{campaign.name}}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <form id="createAdForm">
+              <div class="modal-body">
+                <div class="form-group">
+                  <label for="influencerId">Influencer</label>
+                  <select class="form-control" id="influencerId" name="influencer_id" required>
+                  </select>
+                  </div>
+                  <div class="form-group">
+                      <label for="messages">Messages</label>
+                      <textarea class="form-control" id="messages" name="messages"></textarea>
+                  </div>
+                  <div class="form-group">
+                      <label for="requirements">Requirements</label>
+                      <textarea class="form-control" id="requirements" name="requirements" required></textarea>
+                  </div>
+                  <div class="form-group">
+                      <label for="paymentAmount">Payment Amount</label>
+                      <input type="number" class="form-control" id="paymentAmount" name="payment_amount" step="0.01" required>
+                  </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" id="addAd" data-campaign-id="{{ campaign_id }}">Create Request</button>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
+
+
+{% endblock %}

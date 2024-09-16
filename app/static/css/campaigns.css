@@ -1,0 +1,56 @@
+.mt-4, .my-4 {
+    margin-top: 3.5rem !important;
+    margin-left: -15.5rem;
+    margin-right: -31rem !important;
+}
+
+.mb-4, .my-4 {
+    margin-right: -31rem;
+}
+
+.row {
+    box-shadow: none;
+    width: 150%;
+    justify-content: center
+}
+
+.col-md-4 {
+    max-width: 25%;
+    padding: 10px;
+}
+
+.card {
+    text-align: center;
+    height: 100%;
+}
+
+.btn-secondary.gradient {
+    background-image: linear-gradient(to left, #365F91, #112D4E);
+}
+
+#addCampaign {
+    background-color: #2D9596;
+    color: #fff;
+    box-shadow: 1px 1px 2px rgb(0,0,0,0.1);
+}
+
+#addCampaign:hover {
+    background-color: #218838;
+    color: #fff;
+}
+
+.notification {
+    display: none;
+    position: fixed;
+    top: 60px;
+    right: 18px;
+    padding: 10px 20px;
+    background-color: #28a745; /* Green background for success */
+    color: white;
+    border-radius: 5px;
+    z-index: 1100;
+}
+
+.notification.error {
+    background-color: #dc3545; /* Red background for error */
+}

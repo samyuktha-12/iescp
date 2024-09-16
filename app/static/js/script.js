@@ -1,3 +1,196 @@
+document.addEventListener("DOMContentLoaded", function() {
+    // Fetch influencers and populate dropdown
+    fetch('/api/influencer/getall')
+        .then(response => response.json())
+        .then(data => {
+            const influencerSelect = document.getElementById('influencerId');
+            data.influencers.forEach(influencer => {
+                const option = document.createElement('option');
+                option.value = influencer.id;
+                option.textContent = influencer.username;
+                influencerSelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching influencers:', error);
+        });
+
+    document.getElementById('addAd').addEventListener('click', function() {
+        const form = document.getElementById("createAdForm");
+        const formData = new FormData(form);
+        const formDataObject = {};
+        formData.forEach((value, key) => {
+            formDataObject[key] = value;
+        });
+        const campaignId = this.getAttribute("data-campaign-id");
+        const adJson = {
+            messages: formDataObject.messages,
+            requirements: formDataObject.requirements,
+            payment_amount: formDataObject.payment_amount,
+            status: "Pending",
+            campaign_id: parseInt(campaignId, 10), // Ensure campaign_id is a number
+            influencer_id: parseInt(formDataObject.influencer_id, 10) // Ensure influencer_id is a number
+        };
+        console.log(adJson);
+
+        fetch('/api/campaign/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(adJson)
+        })
+        .then(response => {
+            // Check if the response is OK (status code 200-299)
+            if (response.ok) {
+                return response.json(); // Parse JSON if response is OK
+            } else {
+                return response.json().then(errorData => {
+                    throw new Error(errorData.error || 'An error occurred'); // Throw error if response is not OK
+                });
+            }
+        })
+        .then(data => {
+            showNotification(data.message || 'Ad Request created successfully!', 'success');
+            setTimeout(function() {
+                $('#createAdModal').modal('hide'); 
+                location.reload();
+            }, 1000); 
+        })
+        .catch(error => {
+            console.error('Error creating Ad Request:', error);
+            showNotification(error.message || 'Error creating Ad Request', 'error');
+        });
+
+        function showNotification(message, type) {
+            var notification = document.getElementById('notification');
+            if (notification) {
+                notification.textContent = message;
+                notification.className = 'notification ' + (type || 'error');
+                notification.style.display = 'block';
+                setTimeout(function() {
+                    notification.style.display = 'none';
+                }, 1000);
+            } else {
+                console.error('Notification element not found');
+            }
+        }
+    });
+
+    document.getElementById('edit-ad-request').addEventListener('click', function() {
+            var adRequestId = this.getAttribute('data-ad-request-id');
+            var campaignName = this.getAttribute('data-campaign-name');
+            var messages = this.getAttribute('data-messages');
+            var requirements = this.getAttribute('data-requirements');
+            var payment = this.getAttribute('data-payment-amount');
+            var campaignName = this.getAttribute('data-campaign-name');
+        
+            console.log("EDIT CLICKED");
+
+            document.getElementById('adRequestId').value = adRequestId;
+            document.getElementById('campaignName').value = campaignName;
+            document.getElementById('messages').value = messages;
+            document.getElementById('requirements').value = requirements;
+            document.getElementById('payment').value = payment;
+
+                fetch(`/api/influencers/${adRequestId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const influencerSelect = document.getElementById('influencer');
+                    influencerSelect.innerHTML = ''; 
+                    data.influencers.forEach(influencer => {
+                        const option = document.createElement('option');
+                        option.value = influencer.id;
+                        option.textContent = influencer.username;
+                        influencerSelect.appendChild(option);
+                    });
+
+                    influencerSelect.value = data.assigned_influencer || '';
+
+                    $('#editAdRequestModal').modal('show');
+                })
+                .catch(error => console.error('Error fetching influencers:', error));
+
+    });
+
+    document.getElementById('delete-ad-request').addEventListener('click', function() {
+        var adRequestId = this.getAttribute('data-ad-request-id');
+        var campaignName = this.getAttribute('data-campaign-name');
+        document.getElementById('adRequestId').value = adRequestId;
+        document.getElementById('campaignName').value = campaignName;
+        $('#deleteAdModal').modal('show');
+        console.log("DELETE CLICKED");
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('addCampaign').addEventListener('click', function() {
+        // Get the form data
+        const form = document.getElementById("createCampaignForm");
+        const formData = new FormData(form);
+        const formDataObject = {};
+        formData.forEach((value, key) => {
+            formDataObject[key] = value;
+        });
+
+        // Get sponsor ID from the button's data attribute
+        const sponsorId = this.getAttribute("data-sponsor-id");
+
+        // Construct the campaign JSON object
+        const campaignJson = {
+            name: formDataObject.name,
+            description: formDataObject.description,
+            start_date: formDataObject.start_date,  // Ensure format is correct
+            end_date: formDataObject.end_date,      // Ensure format is correct
+            budget: parseFloat(formDataObject.budget), // Ensure budget is a number
+            visibility: formDataObject.visibility,
+            goals: formDataObject.goals,
+            sponsor_id: parseInt(sponsorId, 10) // Ensure sponsor_id is a number
+        };
+
+        // API URL
+        const apiUrl = '/api/campaigns/create';
+
+        // Send data to the server
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(campaignJson)
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                return response.json().then(errorData => {
+                    throw new Error(errorData.error || 'Network response was not ok');
+                });
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            showNotification(data.message || 'Campaign created successfully!', 'success');
+            setTimeout(function() {
+                $('#createCampaignModal').modal('hide'); // Hide modal
+                location.reload(); // Reload the page to reflect changes
+            }, 100); 
+        })
+        .catch(function(error) {
+            console.error('Error creating campaign:', error);
+            showNotification(error.message || 'Error creating campaign', 'error');
+        });
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification ' + (type || 'error');
+            notification.style.display = 'block';
+            setTimeout(function() {
+                notification.style.display = 'none';
+            }, 1000); 
+        }
+    });
+});
+
 $(document).ready(function() {
     $('#campaignModal').on('show.bs.modal', function (event) {
         try {
@@ -73,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showNotification(data.message || 'Ad request accepted successfully', 'success');
                 setTimeout(function() {
                     location.reload();
-                }, 2000); 
+                }, 1000); 
             })
             .catch(function(error) {
                 console.error('Error accepting ad request:', error);
@@ -119,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 showNotification(data.message || 'AD Request Rejected', 'error');
                 setTimeout(function() {
                     location.reload();
-                }, 2000); 
+                }, 1000); 
             })
             .catch(function(error) {
                 console.error('Error rejecting ad request:', error);
@@ -470,7 +663,7 @@ document.addEventListener('DOMContentLoaded', function() {
             notification.style.display = 'block';
             setTimeout(function() {
                 notification.style.display = 'none';
-            }, 5000); 
+            }, 1000); 
         }
 
     });
@@ -527,7 +720,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     showNotification(data.message || 'Negotiation Initiated', 'success');
                     setTimeout(function() {
                         location.reload();
-                    }, 2000); 
+                    }, 1000); 
                 })
                 .catch(function(error) {
                     console.error('Error Initiating Negotiation', error);
@@ -541,7 +734,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     notification.style.display = 'block';
                     setTimeout(function() {
                         notification.style.display = 'none';
-                    }, 5000); 
+                    }, 1000); 
                 }
 
             });
@@ -586,7 +779,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.addEventListener('DOMContentLoaded', function() {
         document.addEventListener('click', function(event) {
-            if (event.target.closest('#button-container-pending, #button-container-rejected')) {
+            if (event.target.closest('#button-container-pending, #button-container-rejected, .btn-secondary gradient')) {
                 const adRequestId = event.target.dataset.adRequestId;
                 const messages = event.target.dataset.messages;
                 const requirements = event.target.dataset.requirements;
@@ -661,7 +854,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(function() {
                 $('#editAdRequestModal').modal('hide');
                 location.reload(); 
-            }, 2000); 
+            }, 1000); 
         })
         .catch(function(error) {
             console.error('Error Updating Ad Request', error);
@@ -675,19 +868,57 @@ document.addEventListener('DOMContentLoaded', function() {
             notification.style.display = 'block';
             setTimeout(function() {
                 notification.style.display = 'none';
-            }, 5000); 
+            }, 1000); 
+        }
+    });
+
+    document.getElementById('delete-ad').addEventListener('click', function() {
+        var adRequestId = document.getElementById('adRequestId').value;
+        console.log(adRequestId);
+
+        var apiUrl = '/api/ad_requests/delete/' + adRequestId;
+
+        var requestData = {
+            adRequestId: adRequestId
+        };
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        })
+        .then(function(response) {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(function(data) {
+            showNotification(data.message || 'Ad Request Deleted Successfully', 'success');
+            setTimeout(function() {
+                $('#deleteAdModal').modal('hide');
+                location.reload(); 
+            }, 1000); 
+        })
+        .catch(function(error) {
+            console.error('Error Deleting Ad Request', error);
+            showNotification('Error Deleting Ad Request', 'error');
+        });
+
+        function showNotification(message, type) {
+            var notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification ' + (type || 'error');
+            notification.style.display = 'block';
+            setTimeout(function() {
+                notification.style.display = 'none';
+            }, 1000); 
         }
     });
 
     
 
 
-    
-    
-    
-    
-
-    
-    
-    
     
