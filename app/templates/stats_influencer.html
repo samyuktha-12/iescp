@@ -1,0 +1,67 @@
+{% extends "navbar_after_login.html" %}
+
+{% block title %}Stats{% endblock %}
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='/css/stats.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="find">
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between mb-4">
+            <h1>S T A T S</h1>
+        </div>
+        <hr>
+        <div class="container mt-5" style="margin-left: 40rem;">
+            <div class="chart-container" style="display: grid;">
+                <!-- Pie Chart for status Distribution -->
+                <div class="chart">
+                    <h2>Ad Request Status</h2>
+                    <canvas id="statusPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Embedding JSON data directly into JavaScript
+    const statusCounts = {{ status_counts | tojson | safe }};
+
+
+    // Pie Chart for status Distribution
+    const statusLabels = Object.keys(statusCounts);
+    const statusData = Object.values(statusCounts);
+
+    new Chart(document.getElementById('statusPieChart').getContext('2d'), {
+        type: 'pie',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                data: statusData,
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (context.parsed !== null) {
+                                label += ': ' + context.parsed + ' Ad Requests';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

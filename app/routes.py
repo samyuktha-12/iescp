@@ -225,6 +225,22 @@ def stats_sponsor():
                            visibility_counts=visibility_counts,
                            campaign_dates=campaign_dates)
 
+@app.route('/stats_influencer')
+def stats_influencer():
+    influencer_id = request.args.get('influencer_id')
+    ad_requests = AdRequest.query.filter_by(influencer_id=influencer_id).all()
+
+    # Aggregating data
+    status_counts = {'Pending': 0, 'Completed': 0, 'Accepted': 0, 'Negotiated': 0 }
+
+    for ad_request in ad_requests:
+        status_counts[ad_request.status] = status_counts.get(ad_request.status, 0) + 1
+    
+    return render_template('stats_influencer.html',
+                           active_page='stats',
+                           influencer_id=influencer_id,
+                           status_counts=status_counts)
+
 @app.route('/find_influencer')
 def find_influencer():
     # Get filter values from query parameters
