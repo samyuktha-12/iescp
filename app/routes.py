@@ -1,9 +1,9 @@
 # app/routes.py
 from flask import render_template, flash, redirect, url_for, session, request, jsonify
 from app import app, db, api
-from app.forms import LoginForm, RegistrationForm, CampaignForm
+from app.forms import LoginForm, RegistrationForm
 from app.models import User, Campaign, AdRequest, Negotiations, InfluencerProfile
-from app.resources import IndexResource, LoginResource, RegisterResource, GetAllInfluencersResource, AcceptAdRequestResource,RejectAdRequestResource, GetUserProfileResource, GetInfluencerProfileResource, ViewInfluencerProfileResource, EditInfluencerProfileResource, NegotiateAdRequestResource, AddNegotiationResource, AdRequestDetailsResource, GetInfluencersResource, UpdateAdRequestResource, DeleteAdRequestResource, CampaignDetailsResource, DeleteCampaignResource, UpdateCampaignResource
+from app.resources import GetAllFlaggedUsersResource, FlagUserResource, GetUserResource, IndexResource, LoginResource, RegisterResource, GetAllInfluencersResource, AcceptAdRequestResource,RejectAdRequestResource, GetUserProfileResource, GetInfluencerProfileResource, ViewInfluencerProfileResource, EditInfluencerProfileResource, NegotiateAdRequestResource, AddNegotiationResource, AdRequestDetailsResource, GetInfluencersResource, UpdateAdRequestResource, DeleteAdRequestResource, CampaignDetailsResource, DeleteCampaignResource, UpdateCampaignResource
 import requests
 from datetime import datetime
 from sqlalchemy import func
@@ -506,3 +506,6 @@ api.add_resource(DeleteAdRequestResource, '/api/ad_requests/delete/<int:ad_reque
 api.add_resource(CampaignDetailsResource, '/api/campaign/<int:campaign_id>')
 api.add_resource(DeleteCampaignResource, '/api/campaign/delete/<int:campaign_id>')
 api.add_resource(UpdateCampaignResource, '/api/campaign/update/<int:campaign_id>')
+api.add_resource(GetUserResource, '/api/get_users')
+api.add_resource(FlagUserResource, '/api/flag_user')
+api.add_resource(GetAllFlaggedUsersResource, '/api/get_all_flagged_users')

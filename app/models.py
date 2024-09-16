@@ -59,8 +59,6 @@ class Negotiations(db.Model):
     ad_id = db.Column(db.Integer, db.ForeignKey('ad_request.id'), nullable=False)
     new_amount = db.Column(db.Float, nullable=False)
 
-class ShowInterest(db.Model):
+class FlaggedUsers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    influencer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    campaign_id = db.Column(db.Integer, db.ForeignKey('campaign_request.id'), nullable=False)
-    new_amount = db.Column(db.Float, nullable=False)
+    username = db.Column(db.String(64), unique=True, nullable=False)

@@ -1,7 +1,7 @@
 from flask import jsonify, request, url_for, session
 from flask_restful import Resource
 from app import db
-from app.models import User, Campaign, AdRequest, InfluencerProfile, Negotiations
+from app.models import User, Campaign, AdRequest, InfluencerProfile, Negotiations, FlaggedUsers
 from app.forms import LoginForm, RegistrationForm, CampaignForm
 
 class IndexResource(Resource):
@@ -324,6 +324,36 @@ class UpdateCampaignResource(Resource):
         except Exception as e:
             db.session.rollback()
             return jsonify({'success': False, 'error': str(e)}), 500
+
+class GetUserResource(Resource):
+    def get(self):
+        users = User.query.filter(User.role!='admin').all()
+        return jsonify({
+            'users': [{'id': user.id, 'username': user.username} for user in users]
+        })
+
+class FlagUserResource(Resource):
+    def post(self):
+        data = request.get_json()
+        user_id = data.get('user_id')
+        username = data.get('username')
+        existing_flagged_user = FlaggedUsers.query.filter_by(id=user_id).first()
+        if existing_flagged_user:
+            return jsonify({'success': False, 'message': 'User is already flagged'}), 400
+        flagged_user = FlaggedUsers(id=user_id, username=username)
+        db.session.add(flagged_user)
+        db.session.commit()
+
+        return jsonify({'success': True, 'message': 'User flagged successfully'})
+    
+class GetAllFlaggedUsersResource(Resource):
+    def get(self):
+        flagged_users = FlaggedUsers.query.all()
+        users = [{'id': user.id, 'username': user.username} for user in flagged_users]
+        return jsonify(users)
+        
+
+
         
     
 

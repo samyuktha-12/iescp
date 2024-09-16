@@ -38,3 +38,19 @@ canvas {
     width: 90% !important; /* Ensure the canvas takes full width of its container */
     height: 450px !important; /* Adjust height as needed */
 }
+
+.notification {
+    display: none;
+    position: fixed;
+    top: 60px;
+    right: 2px;
+    padding: 10px 20px;
+    background-color: #28a745; /* Green background for success */
+    color: white;
+    border-radius: 5px;
+    z-index: 1100;
+}
+
+.notification.error {
+    background-color: #dc3545; /* Red background for error */
+}
