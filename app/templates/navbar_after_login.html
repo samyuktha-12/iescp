@@ -19,17 +19,15 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav ml-auto">
+                {% if session['role'] =='sponsor' or  session['role'] =='influencer' %}
                 <li class="nav-item{% if active_page == 'profile' %}-active{% endif %}">
                     {% if session['role'] == 'influencer' %}
                         <a class="nav-link" href="{{ url_for('influencer_dashboard') }}">Profile</a>
                     {% elif session['role'] == 'sponsor' %}
                         <a class="nav-link" href="{{ url_for('sponsor_dashboard') }}">Profile</a>
-                    {% elif session['role'] == 'admin' %}
-                        <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Profile</a>
-                    {% else %}
-                        <a class="nav-link" href="{{ url_for('login') }}">Profile</a>
                     {% endif %}
                 </li>
+                {% endif %}
 
                 {% if session['role'] =='sponsor' %}
                 <li class="nav-item{% if active_page == 'campaigns' %}-active{% endif %}">
@@ -37,12 +35,18 @@
                 </li>
                 {% endif %}
 
+                {% if session['role'] =='sponsor' or  session['role'] =='influencer' %}
                 <li class="nav-item{% if active_page == 'find' %}-active{% endif %}">
                     <a class="nav-link" href=#>Find</a>
                 </li>
+                {% endif %}
+
+                {% if session['role'] =='sponsor' or  session['role'] =='influencer' %}
                 <li class="nav-item{% if active_page == 'stats' %}-active{% endif %}">
                     <a class="nav-link" href=#>Stats</a>
                 </li>
+                {% endif %}
+
                 <li class="nav-item" id="logout">
                     <a class="nav-link" href="{{ url_for('logout') }}">Log Out</a>
                 </li>

@@ -1,8 +1,7 @@
 {% extends "navbar_after_login.html" %}
 
 {% block title %}Admin Dashboard{% endblock %}
-
-{% block content %}
-  <h2>Admin Dashboard</h2>
-  <!-- Display statistics and management options -->
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='/css/influencer_dashboard.css') }}">
 {% endblock %}
+
