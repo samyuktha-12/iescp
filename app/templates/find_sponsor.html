@@ -1,14 +1,97 @@
 {% extends "navbar_after_login.html" %}
 
-{% block title %}Find Influencer{% endblock %}
+{% block title %}Find Campaigns{% endblock %}
 {% block styles %}
   <link rel="stylesheet" href="{{ url_for('static', filename='/css/find.css') }}">
 {% endblock %}
 
 {% block content %}
+<div class="find">
     <div class="container mt-4">
         <div class="d-flex justify-content-between mb-4">
-            <h1>S P O N S O R S</h1>
+            <h1>C A M P A I G N S</h1>
         </div>
     <div>
+        <div class="container mt-5">
+            <table class="table table-striped" id="campaignTable">
+                <thead>
+                    <tr>
+                        <th id="headerId">Campaign ID</th>
+                        <th id="headerName">Campaign Name</th>
+                        <th id="headerDescription">Description</th>
+                        <th id="headerStartDate">Start Date</th>
+                        <th id="headerEndDate">End Date</th>
+                        <th id="headerBudget">Budget</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for campaign in campaigns %}
+                    <tr>
+                        <td>{{ campaign.id }}</td>
+                        <td>{{ campaign.name }}</td>
+                        <td>{{ campaign.description }}</td>
+                        <td>{{ campaign.start_date.strftime('%Y-%m-%d %H:%M:%S') if campaign.start_date else 'N/A' }}</td>
+                        <td>{{ campaign.end_date.strftime('%Y-%m-%d %H:%M:%S') if campaign.end_date else 'N/A' }}</td>
+                        <td>Rs. {{ campaign.budget }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const table = document.getElementById('campaignTable');
+    const headers = {
+        'headerId': 0,
+        'headerName': 1,
+        'headerDescription': 2,
+        'headerStartDate': 3,
+        'headerEndDate': 4,
+        'headerBudget': 5
+    };
+    let sortDirection = 'asc';
+
+    Object.keys(headers).forEach(id => {
+        const header = document.getElementById(id);
+        header.addEventListener('click', () => {
+            const index = headers[id];
+            const rows = Array.from(table.querySelectorAll('tbody tr'));
+
+            // Remove sorted classes from all headers
+            Object.keys(headers).forEach(headerId => {
+                const headerElem = document.getElementById(headerId);
+                headerElem.classList.remove('sorted-asc', 'sorted-desc');
+            });
+
+            if (sortDirection === 'asc') {
+                rows.sort((a, b) => compare(a, b, index, id, 'asc'));
+                sortDirection = 'desc';
+                header.classList.add('sorted-asc');
+            } else {
+                rows.sort((a, b) => compare(a, b, index, id, 'desc'));
+                sortDirection = 'asc';
+                header.classList.add('sorted-desc');
+            }
+
+            const tbody = table.querySelector('tbody');
+            rows.forEach(row => tbody.appendChild(row));
+        });
+    });
+
+    function compare(rowA, rowB, index, column, direction) {
+        const cellA = rowA.children[index].innerText.trim();
+        const cellB = rowB.children[index].innerText.trim();
+
+        const a = column === 'headerBudget' ? parseFloat(cellA.replace(/Rs\.|\s/g, '')) : cellA;
+        const b = column === 'headerBudget' ? parseFloat(cellB.replace(/Rs\.|\s/g, '')) : cellB;
+
+        if (a < b) return direction === 'asc' ? -1 : 1;
+        if (a > b) return direction === 'asc' ? 1 : -1;
+        return 0;
+    }
+});
+</script>
 {% endblock %}

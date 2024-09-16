@@ -82,3 +82,52 @@
     padding: 0.5rem;
     text-align: center;
 }
+
+#headerId.sorted-asc::after {
+    content: " ▲";
+    cursor: pointer;
+  }
+  #headerId.sorted-desc::after {
+    content: " ▼";
+    cursor: pointer;
+  }
+  #headerName.sorted-asc::after {
+    content: " ▲";
+    cursor: pointer;
+  }
+  #headerName.sorted-desc::after {
+    content: " ▼";
+    cursor: pointer;
+  }
+  #headerDescription.sorted-asc::after {
+    content: " ▲";
+    cursor: pointer;
+  }
+  #headerDescription.sorted-desc::after {
+    content: " ▼";
+    cursor: pointer;
+  }
+  #headerStartDate.sorted-asc::after {
+    content: " ▲";
+    cursor: pointer;
+  }
+  #headerStartDate.sorted-desc::after {
+    content: " ▼";
+    cursor: pointer;
+  }
+  #headerEndDate.sorted-asc::after {
+    content: " ▲";
+    cursor: pointer;
+  }
+  #headerEndDate.sorted-desc::after {
+    content: " ▼";
+    cursor: pointer;
+  }
+  #headerBudget.sorted-asc::after {
+    content: " ▲";
+    cursor: pointer;
+  }
+  #headerBudget.sorted-desc::after {
+    content: " ▼";
+    cursor: pointer;
+  }

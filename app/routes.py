@@ -310,8 +310,9 @@ def find_influencer():
     return render_template('find_influencer.html', active_page='find', profiles=profiles_data, selected_niche=selected_niche, selected_platform=selected_platform)
 
 @app.route('/find_sponsor')
-def find_sponosr():
-    return render_template('find_sponsor.html', active_page='find')
+def find_sponsor():
+    public_campaigns = Campaign.query.filter_by(visibility='public').all()
+    return render_template('find_sponsor.html', active_page='find', campaigns=public_campaigns)
 
 @app.route('/campaign')
 def campaign():
