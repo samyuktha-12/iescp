@@ -201,6 +201,30 @@ def campaigns():
     campaigns = Campaign.query.filter_by(sponsor_id=sponsor_id).all()
     return render_template('campaigns.html', active_page='campaigns', campaigns=campaigns, sponsor_id=sponsor_id)
 
+@app.route('/stats_sponsor')
+def stats_sponsor():
+    sponsor_id = request.args.get('sponsor_id')
+    campaigns = Campaign.query.filter_by(sponsor_id=sponsor_id).all()
+
+    # Aggregating data
+    visibility_counts = {'public': 0, 'private': 0}
+    campaign_dates = []
+
+    for campaign in campaigns:
+        visibility_counts[campaign.visibility] = visibility_counts.get(campaign.visibility, 0) + 1
+        campaign_dates.append({
+            'name': campaign.name,
+            'start_date': campaign.start_date.isoformat() if campaign.start_date else None,
+            'end_date': campaign.end_date.isoformat() if campaign.end_date else None
+        })
+
+    # Pass the data to the template
+    return render_template('stats_sponsor.html',
+                           active_page='stats',
+                           sponsor_id=sponsor_id,
+                           visibility_counts=visibility_counts,
+                           campaign_dates=campaign_dates)
+
 @app.route('/find_influencer')
 def find_influencer():
     # Get filter values from query parameters

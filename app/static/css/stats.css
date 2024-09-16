@@ -1,0 +1,40 @@
+.find{
+    overflow-y: visible;
+    padding-bottom: 60px;
+}
+
+.mt-4, .my-4 {
+    margin-top: 3.5rem !important;
+    margin-left: -15.5rem !important;
+    margin-right: -31rem !important;
+}
+
+.mb-4, .my-4 {
+    margin-right: -31rem;
+}
+
+.row {
+    box-shadow: none;
+    width: 150%;
+    justify-content: center
+}
+
+.col-md-4 {
+    max-width: 25%;
+    padding: 10px;
+}
+
+.chart-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 100px; /* Adjust gap as needed */
+    margin-right: -31rem
+}
+.chart-container .chart {
+    flex: 1; /* Each chart takes equal width */
+    min-width: 0; /* Ensures the chart containers don't shrink too small */
+}
+canvas {
+    width: 90% !important; /* Ensure the canvas takes full width of its container */
+    height: 450px !important; /* Adjust height as needed */
+}

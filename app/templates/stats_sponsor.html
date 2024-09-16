@@ -1,0 +1,112 @@
+{% extends "navbar_after_login.html" %}
+
+{% block title %}Find Campaigns{% endblock %}
+{% block styles %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='/css/stats.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="find">
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between mb-4">
+            <h1>S T A T S</h1>
+        </div>
+        <hr>
+        <div class="container mt-5">
+            <div class="chart-container">
+                <!-- Pie Chart for Visibility Distribution -->
+                <div class="chart">
+                    <h2>Campaign Visibility</h2>
+                    <canvas id="visibilityPieChart"></canvas>
+                </div>
+                <!-- Bar Chart for Campaign Duration -->
+                <div class="chart">
+                    <h2>Campaign Duration</h2>
+                    <canvas id="campaignDurationBarChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Embedding JSON data directly into JavaScript
+    const visibilityCounts = {{ visibility_counts | tojson | safe }};
+    const campaigns = {{ campaign_dates | tojson | safe }};
+
+    console.log(visibilityCounts);
+    console.log(campaigns);
+
+    // Pie Chart for Visibility Distribution
+    const visibilityLabels = Object.keys(visibilityCounts);
+    const visibilityData = Object.values(visibilityCounts);
+
+    new Chart(document.getElementById('visibilityPieChart').getContext('2d'), {
+        type: 'pie',
+        data: {
+            labels: visibilityLabels,
+            datasets: [{
+                data: visibilityData,
+                backgroundColor: ['#FF6384', '#36A2EB'] // Customize colors as needed
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (context.parsed !== null) {
+                                label += ': ' + context.parsed + ' campaigns';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    const campaignLabels = campaigns.map(c => c.name);
+        const campaignDurations = campaigns.map(c => {
+            const startDate = new Date(c.start_date);
+            const endDate = new Date(c.end_date);
+            return Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)); // Duration in days
+        });
+
+        new Chart(document.getElementById('campaignDurationBarChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: campaignLabels,
+                datasets: [{
+                    label: 'Duration (Days)',
+                    data: campaignDurations,
+                    backgroundColor: '#36A2EB' // Customize color as needed
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Campaign Name'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Duration (Days)'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+</script>
+{% endblock %}

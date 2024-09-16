@@ -47,7 +47,11 @@
 
                 {% if session['role'] =='sponsor' or  session['role'] =='influencer' %}
                 <li class="nav-item{% if active_page == 'stats' %}-active{% endif %}">
-                    <a class="nav-link" href=#>Stats</a>
+                    {% if session['role'] == 'influencer' %}
+                        <a class="nav-link" href="{{ url_for('stats_sponsor', sponsor_id=session['user_id']) }}">Stats</a>
+                    {% elif session['role'] == 'sponsor' %}
+                        <a class="nav-link" href="{{ url_for('stats_sponsor', sponsor_id=session['user_id']) }}">Stats</a>
+                    {% endif %}
                 </li>
                 {% endif %}
 
