@@ -77,8 +77,20 @@ def register():
 
 @app.route('/admin/dashboard')
 def admin_dashboard():
-    # Implement admin dashboard view logic here
-    return render_template('admin_dashboard.html', title='Admin Dashboard')
+    ad_requests = AdRequest.query.all()
+    status_counts = {'Pending': 0, 'Completed': 0, 'Accepted': 0, 'Negotiated': 0 }
+    for ad_request in ad_requests:
+        status_counts[ad_request.status] = status_counts.get(ad_request.status, 0) + 1
+    campaigns = Campaign.query.all()
+    visibility_counts = {'public': 0, 'private': 0}
+    for campaign in campaigns:
+        visibility_counts[campaign.visibility] = visibility_counts.get(campaign.visibility, 0) + 1
+    users = User.query.all()
+    user_counts = {'influencer': 0, 'sponsor':0}
+    for user in users:
+        user_counts[user.role] = user_counts.get(user.role, 0) + 1
+    
+    return render_template('admin_dashboard.html', status_counts=status_counts, visibility_counts=visibility_counts, user_counts=user_counts)
 
 @app.route('/influencer/dashboard')
 def influencer_dashboard():
@@ -106,7 +118,6 @@ def influencer_dashboard():
     completed = []
     negotiated = []
     others = []
-    current_date = datetime.utcnow()
     
     for ad_request, campaign, sponsor_name, new_amount in ad_requests:
         #if campaign.start_date <= current_date <= campaign.end_date and ad_request.status in ['Accepted']:

@@ -2,6 +2,140 @@
 
 {% block title %}Admin Dashboard{% endblock %}
 {% block styles %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='/css/influencer_dashboard.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='/css/admin_dashboard.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="find">
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between mb-4">
+            <h1>A D M I N</h1>
+        </div>
+        <hr>
+        <div class="container mt-5">
+            <div class="chart-container">
+                <div class="chart">
+                    <h2>Campaign Visibility</h2>
+                    <canvas id="visibilityPieChart"></canvas>
+                </div>
+                <div class="chart">
+                    <h2>Ad Request Status</h2>
+                    <canvas id="statusPieChart"></canvas>
+                </div>
+                <div class="chart">
+                  <h2>User Status</h2>
+                  <canvas id="userPieChart"></canvas>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+  const visibilityCounts = {{ visibility_counts | tojson | safe }};
+  const visibilityLabels = Object.keys(visibilityCounts);
+    const visibilityData = Object.values(visibilityCounts);
+
+    new Chart(document.getElementById('visibilityPieChart').getContext('2d'), {
+        type: 'pie',
+        data: {
+            labels: visibilityLabels,
+            datasets: [{
+                data: visibilityData,
+                backgroundColor: ['#FF6384', '#36A2EB'] // Customize colors as needed
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (context.parsed !== null) {
+                                label += ': ' + context.parsed + ' campaigns';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    const statusCounts = {{ status_counts | tojson | safe }};
+
+
+    // Pie Chart for status Distribution
+    const statusLabels = Object.keys(statusCounts);
+    const statusData = Object.values(statusCounts);
+
+    new Chart(document.getElementById('statusPieChart').getContext('2d'), {
+        type: 'pie',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                data: statusData,
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (context.parsed !== null) {
+                                label += ': ' + context.parsed + ' Ad Requests';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    const userCounts = {{ user_counts | tojson | safe }};
+    const userLabels = Object.keys(userCounts);
+    const userData = Object.values(userCounts);
+
+    new Chart(document.getElementById('userPieChart').getContext('2d'), {
+        type: 'pie',
+        data: {
+            labels: userLabels,
+            datasets: [{
+                data: userData,
+                backgroundColor: ['#FF6384', '#36A2EB' , '#FFCE56'] // Customize colors as needed
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (context.parsed !== null) {
+                                label += ': ' + context.parsed + ' Users';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}
 
