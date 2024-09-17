@@ -26,11 +26,7 @@
 </div>
 
 <script>
-    // Embedding JSON data directly into JavaScript
     const statusCounts = {{ status_counts | tojson | safe }};
-
-
-    // Pie Chart for status Distribution
     const statusLabels = Object.keys(statusCounts);
     const statusData = Object.values(statusCounts);
 

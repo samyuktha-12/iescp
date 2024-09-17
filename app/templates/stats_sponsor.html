@@ -15,12 +15,10 @@
         <hr>
         <div class="container mt-5">
             <div class="chart-container">
-                <!-- Pie Chart for Visibility Distribution -->
                 <div class="chart">
                     <h2>Campaign Visibility</h2>
                     <canvas id="visibilityPieChart"></canvas>
                 </div>
-                <!-- Bar Chart for Campaign Duration -->
                 <div class="chart">
                     <h2>Campaign Duration</h2>
                     <canvas id="campaignDurationBarChart"></canvas>
@@ -31,14 +29,12 @@
 </div>
 
 <script>
-    // Embedding JSON data directly into JavaScript
     const visibilityCounts = {{ visibility_counts | tojson | safe }};
     const campaigns = {{ campaign_dates | tojson | safe }};
 
     console.log(visibilityCounts);
     console.log(campaigns);
 
-    // Pie Chart for Visibility Distribution
     const visibilityLabels = Object.keys(visibilityCounts);
     const visibilityData = Object.values(visibilityCounts);
 
@@ -48,7 +44,7 @@
             labels: visibilityLabels,
             datasets: [{
                 data: visibilityData,
-                backgroundColor: ['#FF6384', '#36A2EB'] // Customize colors as needed
+                backgroundColor: ['#FF6384', '#36A2EB'] 
             }]
         },
         options: {
@@ -76,7 +72,7 @@
         const campaignDurations = campaigns.map(c => {
             const startDate = new Date(c.start_date);
             const endDate = new Date(c.end_date);
-            return Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)); // Duration in days
+            return Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)); 
         });
 
         new Chart(document.getElementById('campaignDurationBarChart').getContext('2d'), {
@@ -86,7 +82,7 @@
                 datasets: [{
                     label: 'Duration (Days)',
                     data: campaignDurations,
-                    backgroundColor: '#36A2EB' // Customize color as needed
+                    backgroundColor: '#36A2EB' 
                 }]
             },
             options: {

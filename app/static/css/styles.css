@@ -1,68 +1,68 @@
 body {
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Ensure full viewport height */
+    min-height: 100vh; 
     margin: 0;
-    background-color: #F9F7F7; /* White Smoke background */
-    color: #112D4E; /* Prussian Blue text */
+    background-color: #F9F7F7; 
+    color: #112D4E; 
     font-family: Lora, serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    color: #112D4E; /* Prussian Blue headlines */
+    color: #112D4E; 
 }
 
 .btn-primary {
-    background-color: #3F72AF; /* Steel Blue buttons */
+    background-color: #3F72AF; 
     border-color: #3F72AF;
     border-radius: 30px;
     box-shadow: 2px 0px 2px  #112D4E;
 }
 
 .btn-primary:hover {
-    background-color: #365F91; /* Darker Steel Blue on hover */
+    background-color: #365F91; 
     border-color: #365F91;
 }
 
 .btn-secondary {
-    background-color: #112D4E; /* Light Blue secondary buttons */
+    background-color: #112D4E; 
     border-color: #112D4E;
 }
 
 .btn-secondary:hover {
-    background-color: #365F91; /* Darker Light Blue on hover */
+    background-color: #365F91; 
     border-color: #365F91;
 }
 
 .alert-warning {
-    background-color: #FFD700; /* Optional: Yellow warnings */
+    background-color: #FFD700; 
     border-color: #FFD700;
-    color: #112D4E; /* Prussian Blue */
+    color: #112D4E; 
 }
 
 .alert-success {
-    background-color: #3F72AF; /* Steel Blue success messages */
+    background-color: #3F72AF; 
     border-color: #3F72AF;
-    color: #F9F7F7; /* White Smoke */
+    color: #F9F7F7; 
 }
 
 .jumbotron {
-    background-color: #DBE2EF; /* Light Blue secondary background */
+    background-color: #DBE2EF; 
     padding: 2rem 1rem;
 }
 
 a {
-    color: #3F72AF; /* Steel Blue links */
+    color: #3F72AF; 
 }
 
 a:hover {
-    color: #365F91; /* Darker Steel Blue on hover */
+    color: #365F91; 
 }
 
 .navbar {
-    background-color: rgba(17, 45, 78, 0.95); /* Prussian Blue with 95% opacity */
+    background-color: rgba(17, 45, 78, 0.95); 
     box-shadow: 
-    0 3px 4px rgba(17, 45, 78, 0.2), /* Shadow matching Prussian Blue */
+    0 3px 4px rgba(17, 45, 78, 0.2), 
     0 5px 8px rgba(17, 45, 78, 0.1);
     background-image: linear-gradient(to right, #112D4E 65%, #3F72AF);
     position: fixed;
@@ -72,19 +72,19 @@ a:hover {
 }
 
 .navbar-nav .nav-link {
-    color: #F9F7F7; /* White Smoke text for navbar links */
+    color: #F9F7F7; 
 }
 
 .navbar-nav .nav-link:hover {
-    color: #B8C7DE; /* Lighter Steel Blue on hover */
+    color: #B8C7DE; 
 }
 
 .jumbotron {
-    background-color: #DBE2EF; /* Light Blue secondary background */
-    margin-top: 20px; /* Add margin from the top */
-    padding: 2rem 1rem; /* Padding for content inside the jumbotron */
-    border-radius: 5px; /* Rounded corners */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Small shadow */
+    background-color: #DBE2EF; 
+    margin-top: 20px; 
+    padding: 2rem 1rem; 
+    border-radius: 5px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 }
 
 .navbar-dark .navbar-nav .nav-link {
@@ -96,15 +96,15 @@ a:hover {
 }
 
 .footer {
-    background-color: rgba(17, 45, 78, 0.95); /* Prussian Blue with 95% opacity */
+    background-color: rgba(17, 45, 78, 0.95); 
     box-shadow:  
     0 -3px 4px rgba(17, 45, 78, 0.1),
     0 -5px 8px rgba(17, 45, 78, 0.2);
     background-image: linear-gradient(to left, #112D4E 65%, #3F72AF);
-    color: #F9F7F7; /* White Smoke text in footer */
-    padding: 10px 0; /* Padding for content inside the footer */
-    text-align: center; /* Center-align text inside the footer */
-    width: 100%; /* Full width */
+    color: #F9F7F7; 
+    padding: 10px 0; 
+    text-align: center; 
+    width: 100%;
     bottom:0;
     position: fixed;
     z-index:1000;
@@ -114,7 +114,7 @@ a:hover {
 }
 
 .highlight {
-    color: #112D4E; /* Prussian Blue text */
+    color: #112D4E; 
     font-weight: bold;
     background-color: #B8C7DE;
     padding: 0.1px;

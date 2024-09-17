@@ -96,7 +96,7 @@
             labels: visibilityLabels,
             datasets: [{
                 data: visibilityData,
-                backgroundColor: ['#FF6384', '#36A2EB'] // Customize colors as needed
+                backgroundColor: ['#FF6384', '#36A2EB'] 
             }]
         },
         options: {
@@ -123,7 +123,6 @@
     const statusCounts = {{ status_counts | tojson | safe }};
 
 
-    // Pie Chart for status Distribution
     const statusLabels = Object.keys(statusCounts);
     const statusData = Object.values(statusCounts);
 
@@ -167,7 +166,7 @@
             labels: userLabels,
             datasets: [{
                 data: userData,
-                backgroundColor: ['#FF6384', '#36A2EB' , '#FFCE56'] // Customize colors as needed
+                backgroundColor: ['#FF6384', '#36A2EB' , '#FFCE56']
             }]
         },
         options: {
@@ -273,21 +272,18 @@
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        return response.json(); // Parse JSON response
+        return response.json(); 
     })
     .then(data => {
-        // Get the table body element
         const tableBody = document.querySelector('#flaggedUsersModal .table tbody');
-        tableBody.innerHTML = ''; // Clear any existing rows
-        
-        // Populate the table with data
+        tableBody.innerHTML = ''; 
+
         data.forEach(user => {
             const row = document.createElement('tr');
             row.innerHTML = `<th>User</th><td>${user.username}</td>`;
             tableBody.appendChild(row);
         });
-        
-        // Show the modal
+
         $('#flaggedUsersModal').modal('show');
     })
     .catch(error => {
